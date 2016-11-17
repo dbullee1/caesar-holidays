@@ -44,7 +44,6 @@ function create() {
 	// Background
 	background = game.add.tileSprite(0, 0, width, height, 'starfield');
 	groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'ground');
-	game.world.bringToTop(groundSprite);
 
 	// Platforms
 	platforms = game.add.group();
@@ -89,6 +88,7 @@ function useProjectile() {
 		let startLocationX = player.body.x;
 		var projectile = projectiles.create(startLocationX, projectileStartLocationY, 'projectile');
 		projectilesInUse++;
+		game.world.bringToTop(groundSprite);
 	}
 }
 
