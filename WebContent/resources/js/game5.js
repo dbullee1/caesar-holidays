@@ -28,6 +28,8 @@ function preload() {
 }
 
 var player;
+var playerDying;
+
 var numOfProjectiles = 1;
 var projectilesInUse = 0;
 var projectiles;
@@ -100,7 +102,11 @@ function useProjectile() {
 
 function update() {
 	// Collisions
-	game.physics.arcade.collide(player, platforms);
+	if(!playerDying){
+		game.physics.arcade.collide(player, platforms);
+		game.physics.arcade.overlap(player, balls, playerHit, null, this);
+	}
+	
 	game.physics.arcade.collide(projectiles, platforms);
 	game.physics.arcade.collide(projectiles, bounds);
 
@@ -110,10 +116,13 @@ function update() {
 			null, this);
 
 	handleBallPhysics();
-	handlePlayerMovement();
-
-	// Projectile
-	for (var i = 0; i < projectiles.children.length; i++) {
+	
+	if(!playerDying){
+		handlePlayerMovement();
+    }
+    
+    //Projectile
+    for (var i = 0; i < projectiles.children.length; i++) {
 		var projectile = projectiles.children[i];
 		projectile.body.y -= 7.35;
 	}
@@ -124,32 +133,44 @@ function destroyProjectile(projectile) {
 	projectilesInUse--;
 }
 
-function projectileBallCollision(projectile, ball) {
+function projectileBallCollision(projectile, ball){
+	//TODO play destroy snowball sound
+	
 	destroyProjectile(projectile);
-	if (ball.key === 'snowball_48') {
+	
+	if(ball.key === 'snowball_48'){
 		splitBall(ball, 2);
-	} else if (ball.key === 'snowball_32') {
+	} else if(ball.key === 'snowball_32'){
 		splitBall(ball, 1);
 	}
 	ball.destroy();
-	if (balls.children.length === 0) {
+	
+	if(balls.children.length === 0){
 		window.alert("Level complete");
 	}
 }
 
-function splitBall(original, newBallSize) {
-	let
-	velocityX = original.body.velocity.x;
-	let
-	velocityY = original.body.velocity.y;
-	balls.add(new Ball(newBallSize, velocityX, velocityY, original.body.x,
-			original.body.y));
-	balls.add(new Ball(newBallSize, -velocityX, velocityY, original.body.x,
-			original.body.y));
+function splitBall(original, newBallSize){
+	let velocityX = original.body.velocity.x;
+	let velocityY = original.body.velocity.y;
+	balls.add(new Ball(newBallSize, velocityX, velocityY, original.body.x, original.body.y));
+	balls.add(new Ball(newBallSize, -velocityX, velocityY, original.body.x, original.body.y));
 }
 
-function handleBallPhysics() {
-	if (game.physics.arcade.collide(balls, floor)) {
+function playerHit(player, ball){
+	//TODO play death sound
+	
+	playerDying = true;
+	player.body.collideWorldBounds = false;
+	player.body.velocity.y = -400;
+}
+
+function reset() {
+	alert("refresh de pagina")
+}
+
+function handleBallPhysics(){
+	if(game.physics.arcade.collide(balls, floor)){
 		for (var i = 0; i < balls.children.length; i++) {
 			var ball = balls.children[i];
 			if (ball.body.touching.down) {
@@ -158,10 +179,6 @@ function handleBallPhysics() {
 		}
 	}
 	game.physics.arcade.collide(balls, platforms);
-}
-
-function loadLevel(levelName) {
-	window.alert('Loading ' + levelName);
 }
 
 function handlePlayerMovement() {
@@ -219,6 +236,10 @@ function loadLevel(levelObject) {
 
 	// destroy player and create new player object
 	createPlayer(playerPosition);
+	
+	
+	//caches the level
+	cachedLevel = levelObject
 }
 
 function createPlayer(playerPosition) {
@@ -234,6 +255,8 @@ function createPlayer(playerPosition) {
 			13, 14, 15 ], 20, true);
 	player.animations.add('left', [ 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
 			27, 28, 29, 30, 31 ], 20, true);
+	player.checkWorldBounds = true;
+	player.events.onOutOfBounds.add(reset, this);
 }
 
 function createBalls(levelBalls) {
