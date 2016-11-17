@@ -29,7 +29,7 @@ var projectilesInUse = 0;
 var projectiles;
 
 var cachedLevel;
-var levelUrl;
+var levelUrl = '../resources/levels/';
 var level;
 
 var platforms;
@@ -189,12 +189,12 @@ function getLevel(levelName) {
 	let jqXHR = $.ajax({
 		dataType: "json",
 		async: false,
-		url: (levelurl + level),
+		url: (levelUrl + levelName),
 		  beforeSend: function( xhr ) {
 		    xhr.overrideMimeType( "text/plain; charset=x-user-defined" );
 		  }
 		}).done(function(data) {
-			loadedLevel = JSON.parse(data);
+			loadedLevel = data;
 		});
 	return loadedLevel;
 }
