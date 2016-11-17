@@ -35,7 +35,9 @@ var levelUrl = '../resources/levels/level';
 var levelExtension = '.json'
 var level = 1;
 
-var platforms;
+var platforms= {};
+platforms.children = [];
+
 var bounds;
 var floor;
 
@@ -51,17 +53,12 @@ function create() {
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	projectileStartLocationY = game.world.height - 100
 
-	groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'ground');
-
 	// Platforms
 	platforms = game.add.group();
 	platforms.enableBody = true;
 
 	bounds = game.add.group();
 	bounds.enableBody = true;
-
-	floor = platforms.create(0, game.world.height - 32, 'ground_invisible');
-	floor.body.immovable = true;
 
 	var top = bounds.create(0, -32, 'ground_invisible');
 	top.body.immovable = true;
@@ -222,7 +219,7 @@ function loadLevel(levelObject) {
 	let
 	levelBalls = levelObject.balls;
 	let
-	platforms = levelObject.platforms;
+	levelPlatforms = levelObject.platforms;
 	let
 	playerPosition = levelObject.player.position;
 	let
@@ -239,6 +236,9 @@ function loadLevel(levelObject) {
 
 	// caches the level
 	cachedLevel = levelObject
+	
+	//createPlatforms
+	createPlatform(levelPlatforms);
 
 	// destroy projectiles
 	numOfProjectiles = 1;
@@ -280,7 +280,32 @@ function createBalls(levelBalls) {
 		ball = levelBalls[i];
 		balls.add(new Ball(ball.size, ball.velocity));
 	}
+}
 
+function createPlatform(levelPlatforms) {
+	if(!!groundSprite) {
+		groundSprite.destroy();
+	}
+	if(!!floor) {
+		floor.destroy();
+	}
+	
+	let i = platforms.children.length;
+	while (i--) {
+		platsforms.children[i].destroy();
+	}
+	
+//	for(i = 0; i < levelPlatforms.length; i++) {
+//		let platform = levelPlatforms[i];
+//		platforms.add(new Platform(platform.type, platform.position.x, platform.position.y, platform.width, platform.height));
+//	}
+	
+	//fallback
+	if(platforms.children.length == 0) {
+		groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'ground');
+		floor = platforms.create(0, game.world.height - 32, 'ground_invisible');
+		floor.body.immovable = true;
+	}
 }
 
 function createBackground(backgroundName) {
