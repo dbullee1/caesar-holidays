@@ -85,7 +85,7 @@ function create() {
 	balls = game.add.group();
     balls.enableBody = true;
     
-    balls.add(new Ball(2, 200));
+    balls.add(new Ball(1, 200));
 	
 	// Score
 	scoreText = scoreText = game.add.text(width / 2, 16, 'score: 0', {
@@ -109,13 +109,13 @@ function useProjectile() {
 }
 
 function update() {
-	//Physics
+	//Collisions
 	game.physics.arcade.collide(player, platforms);
 	game.physics.arcade.collide(projectiles, platforms);
 	game.physics.arcade.collide(projectiles, bounds);
 	
 	game.physics.arcade.overlap(projectiles, bounds, destroyProjectile, null, this);
-	game.physics.arcade.overlap(projectiles, balls, ballCollision, null, this);
+	game.physics.arcade.overlap(projectiles, balls, projectileBallCollision, null, this);
 	
 	handleBallPhysics();
 	
@@ -133,12 +133,17 @@ function destroyProjectile(projectile) {
 	projectilesInUse--;
 }
 
-function ballCollision(projectile, ball){
+function projectileBallCollision(projectile, ball){
 	destroyProjectile(projectile);
-	if(ball.key === 'snowball_32'){
+	if(ball.key === 'snowball_48'){
+		splitBall(ball, 2);
+	} else if(ball.key === 'snowball_32'){
 		splitBall(ball, 1);
 	}
 	ball.destroy();
+	if(balls.children.length === 0){
+		window.alert("Level complete");
+	}
 }
 
 function splitBall(original, newBallSize){
@@ -160,42 +165,8 @@ function handleBallPhysics(){
 	game.physics.arcade.collide(balls, platforms);
 }
 
-function collectStar(player, star) {
-
-	// Removes the star from the screen
-	star.kill();
-	score += 10;
-	scoreText.text = 'Score: ' + score;
-
-	switch (score) {
-	case 50:
-		playerVelocity = 650;
-		starSpawnRate = 1000;
-		obstacleSpawnRate = 2300;
-		backgroundSpeed = 2;
-		break;
-	case 100:
-		playerVelocity = 800;
-		starSpawnRate = 1000;
-		obstacleSpawnRate = 1800;
-		backgroundSpeed = 3;
-		break;
-	case 150:
-		window.location = "./message"
-		break;
-	}
-}
-
-function reset() {
-	player.body.x = 32;
-	player.body.y = game.world.height - 300;
-	player.body.velocity.y = 0;
-	score = 0;
-	scoreText.text = 'Score: ' + score;
-}
-
-function playerDies(player, trap) {
-	reset();
+function loadLevel(levelName){
+	window.alert('Loading ' + levelName);
 }
 
 function handlePlayerMovement(){
