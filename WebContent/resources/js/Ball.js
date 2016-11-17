@@ -9,7 +9,7 @@ function Ball(size, angle, velocity){
 		this.gravity = 1000;
 		break;
 	case 3:
-		this.spriteName = 'snowball';
+		this.spriteName = 'snowball_48';
 		this.gravity = 750;
 		break;
 	}

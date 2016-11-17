@@ -16,8 +16,11 @@ function preload() {
 	game.load.image('ground_invisible', '../resources/images/dak_invisible.png');
 	game.load.image('ground', '../resources/images/cartoon-roof.jpg');
 	game.load.image('projectile', '../resources/images/xmas-harpoon.png')
-	game.load.spritesheet('santa', '../resources/images/santa.png', 91,
-			115);
+	game.load.spritesheet('santa', '../resources/images/santa.png', 91,	115);
+	
+	game.load.image('snowball_16', '../resources/images/snowballs/snowball_16.png');
+    game.load.image('snowball_32', '../resources/images/snowballs/snowball_32.png');
+    game.load.image('snowball_48', '../resources/images/snowballs/snowball_48.png');
 }
 
 var player;
@@ -27,6 +30,9 @@ var projectiles;
 
 var platforms;
 var bounds;
+var floor;
+
+var balls;
 
 var score = 0;
 var scoreText;
@@ -52,8 +58,8 @@ function create() {
 	bounds = game.add.group();
 	bounds.enableBody = true;
 
-	ground = platforms.create(0, game.world.height - 32, 'ground_invisible');
-	ground.body.immovable = true;
+	floor = platforms.create(0, game.world.height - 32, 'ground_invisible');
+	floor.body.immovable = true;
 	
 	var top = bounds.create(0, -32, 'ground_invisible');
 	top.body.immovable = true;
@@ -71,6 +77,13 @@ function create() {
 
 	cursors = game.input.keyboard.createCursorKeys();
 
+	//Balls
+	balls = game.add.group();
+    balls.enableBody = true;
+    
+    balls.add(new Ball(1, 2, -100));
+    balls.add(new Ball(2, 2, 200));
+	
 	// Score
 	scoreText = scoreText = game.add.text(width / 2, 16, 'score: 0', {
 		fontSize : '32px',
@@ -98,13 +111,16 @@ function destroyProjectile(projectile) {
 }
 
 function update() {
+	//Physics
 	game.physics.arcade.collide(player, platforms);
 	game.physics.arcade.collide(projectiles, platforms);
 	game.physics.arcade.collide(projectiles, bounds);
 	
 	game.physics.arcade.overlap(projectiles, bounds, destroyProjectile, null, this);
 	
-//  Reset the players velocity (movement)
+	handleBallPhysics();
+	
+	//Player movement
     player.body.velocity.x = 0;
 
     if (cursors.left.isDown)
@@ -128,10 +144,23 @@ function update() {
         player.frame = 32;
     }
     
+    //Projectile
     for (var i = 0; i < projectiles.children.length; i++) {
 		var projectile = projectiles.children[i];
 		projectile.body.y -= 7.35;
 	}
+}
+
+function handleBallPhysics(){
+	if(game.physics.arcade.collide(balls, floor)){
+		for (var i = 0; i < balls.children.length; i++) {
+			var ball = balls.children[i];
+			if(ball.body.touching.down){
+				ball.body.velocity.y = -900;
+			}
+		}
+	}
+	game.physics.arcade.collide(balls, platforms);
 }
 
 function collectStar(player, star) {
