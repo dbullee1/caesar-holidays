@@ -5,9 +5,11 @@ var background;
 
 function preload() {
 	game.load.image('sky', '../resources/assets/tests/sky.png');
-    game.load.image('ground', '../resources/assets/sprites/platform.png');
+    game.load.image('ground', '../resources/images/cartoon-roof.jpg');
+    game.load.image('ground_invisible', '../resources/images/dak_invisible.png');
     game.load.image('star', '../resources/assets/particlestorm/star.png');
-	game.load.image('spike', '../resources/assets/spike.png');
+    game.load.image('snowball_16', '../resources/images/snowball_16.png');
+    game.load.image('snowball_32', '../resources/images/snowball_32.png');
     game.load.spritesheet('dude', '../resources/assets/games/starstruck/dude.png', 32, 48);
 }
 
@@ -15,6 +17,7 @@ var player;
 var platforms;
 var stars;
 var traps;
+var balls;
 
 var score = 0;
 var scoreText;
@@ -24,13 +27,13 @@ function create() {
 	
 	//Background
 	background = game.add.tileSprite(0, 0, game.stage.bounds.width, game.cache.getImage('sky').height, 'sky');
-	addRain();
+	game.add.tileSprite(0, game.world.height - 32, 800, 32, 'ground');
 	
 	//Platforms
 	platforms = game.add.group();
 	platforms.enableBody = true;
 	
-	var ground = platforms.create(0, game.world.height - 64, 'ground');
+	var ground = platforms.create(0, game.world.height - 32, 'ground_invisible');
 	ground.scale.setTo(2, 2);
 	ground.body.immovable = true;
 	
@@ -57,27 +60,45 @@ function create() {
 
     stars.enableBody = true;
 
-    for (var i = 0; i < 12; i++)
+    /*for (var i = 0; i < 12; i++)
     {
         var star = stars.create(i * 70, 0, 'star');
         star.body.gravity.y = 600;
         star.body.bounce.y = 0.7 + Math.random() * 0.2;
-    }
+    }*/
+    
+    //balls
+    balls = game.add.group();
+    balls.enableBody = true;
+    
+    balls.add(new Ball(1, 2, 100));
+    balls.add(new Ball(2, 2, 200));
 	
 	//traps
 	traps = game.add.group();
 	traps.enableBody = true;
-	var spike = traps.create(325,game.world.height - 80,'spike');
 	
 	//Score
 	scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 	
 }
 
-function update() {
+function update() {	
+	//hit detection
 	var hitPlatform = game.physics.arcade.collide(player, platforms);
-	
 	game.physics.arcade.collide(stars, platforms);
+	game.physics.arcade.collide(balls, platforms);
+	
+	/* Does not work as expected, hitbox acts weird when angling
+	var rotationSpeed = 3;
+	for (var i = 0; i < balls.children.length; i++) {
+		var ball = balls.children[i];
+		if(ball.velocity > 0){
+			ball.angle += rotationSpeed;
+		} else{
+			ball.angle += -rotationSpeed;
+		}
+	}*/
 	
 	//  Reset the players velocity (movement)
     player.body.velocity.x = 0;
@@ -134,17 +155,4 @@ function playerDies (player, trap) {
 	score = 0;
 	scoreText.text = 'Score: ' + score;
 	game.state.start('Game');
-}
-
-function addRain(){
-	let fog = game.add.bitmapData(game.width, game.height);
- 
-    fog.ctx.rect(0, 0, game.width, this.game.height);
-    fog.ctx.fillStyle = '#b2ddc8';
-    fog.ctx.fill();
- 
-    this.fogSprite = this.game.add.sprite(0, 0, fog);
- 
-    this.fogSprite.alpha = 0;
-    game.add.tween(this.fogSprite).to( { alpha: 0.7 }, 6000, null, true);
 }
