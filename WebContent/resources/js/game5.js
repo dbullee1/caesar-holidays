@@ -97,9 +97,9 @@ function create() {
 
 function useProjectile() {
 	if(projectilesInUse < numOfProjectiles) {
-		let startLocationX = player.body.x;
+		let startLocationX = player.body.x + (player.width/4);
 		var projectile = projectiles.create(startLocationX, projectileStartLocationY, 'projectile');
-		projectilesInUse++;
+		projectilesInUse++; 
 		game.world.bringToTop(groundSprite);
 	}
 }
