@@ -28,6 +28,10 @@ var numOfProjectiles = 1;
 var projectilesInUse = 0;
 var projectiles;
 
+var cachedLevel;
+var levelUrl;
+var level;
+
 var platforms;
 var bounds;
 var floor;
@@ -208,3 +212,23 @@ function handlePlayerMovement(){
         player.frame = 32;
     }
 }
+
+function getLevel(levelName) {
+	let loadedLevel;
+	let jqXHR = $.ajax({
+		dataType: "json",
+		async: false,
+		url: (levelurl + level),
+		  beforeSend: function( xhr ) {
+		    xhr.overrideMimeType( "text/plain; charset=x-user-defined" );
+		  }
+		}).done(function(data) {
+			loadedLevel = JSON.parse(data);
+		});
+	return loadedLevel;
+}
+
+function loadLevel(levelObject) {
+	
+}
+
