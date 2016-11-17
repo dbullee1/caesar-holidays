@@ -1,24 +1,24 @@
-M Audio
-	- Doodgaan = Auw
-	- Harpoon = ?
-	- Sneeuwball kapot = ?
-M Doodgaan
-	- Reset functie
-M Levels
-M Redirect naar message
+M Levels (Hong)
+	- Level overgang
+M Platforms (Dennis)
+	M verschillende width
+	S Repeating sprite
+	S Verschillende types vloer
+		- Ijs
+		- Modder
+M Redirect naar message (Blocked)
 	- Laatste level, geen ballen meer
 M Andere hoofden
 	- 2 dummy sprites
 	- Parameter /Experts
-M Platforms
-	M verschillende width
-	S Repeating sprite
-S Verschillende types vloer
-	- Ijs
-	- Gat
-	- Modder
+M Audio
+	- Doodgaan = Auw 
+	- Harpoon = ?
+	- Sneeuwball kapot = ? 
 S Sneeuw animatie/overlay
 C Menu / level selection
 C Redirect in menu
 C Mobile
 W Power ups
+
+Code opschonen
