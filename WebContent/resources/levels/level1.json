@@ -1,6 +1,6 @@
 {
 	"name": "level 1",
-	"background": "path/to/image",
+	"background": "starfield",
 	"balls": [
 	{
 		"size": 1,
