@@ -15,6 +15,7 @@ function preload() {
 
 var player;
 var platforms;
+var ground;
 var stars;
 var traps;
 var balls;
@@ -33,7 +34,7 @@ function create() {
 	platforms = game.add.group();
 	platforms.enableBody = true;
 	
-	var ground = platforms.create(0, game.world.height - 32, 'ground_invisible');
+	ground = platforms.create(0, game.world.height - 32, 'ground_invisible');
 	ground.scale.setTo(2, 2);
 	ground.body.immovable = true;
 	
@@ -87,6 +88,15 @@ function update() {
 	//hit detection
 	var hitPlatform = game.physics.arcade.collide(player, platforms);
 	game.physics.arcade.collide(stars, platforms);
+	
+	if(game.physics.arcade.collide(balls, ground)){
+		for (var i = 0; i < balls.children.length; i++) {
+			var ball = balls.children[i];
+			if(ball.body.touching.down){
+				ball.body.velocity.y = -900;
+			}
+		}
+	}
 	game.physics.arcade.collide(balls, platforms);
 	
 	/* Does not work as expected, hitbox acts weird when angling
