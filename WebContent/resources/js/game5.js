@@ -24,6 +24,8 @@ function preload() {
 }
 
 var player;
+var playerDying;
+
 var numOfProjectiles = 1;
 var projectilesInUse = 0;
 var projectiles;
@@ -69,8 +71,10 @@ function create() {
 	game.physics.arcade.enable(player);
 
 	player.body.bounce.y = 0;
-	player.body.gravity.y = 1500;
+	player.body.gravity.y = 2000;
 	player.body.collideWorldBounds = true;
+	player.checkWorldBounds = true;
+	player.events.onOutOfBounds.add(reset, this);
 
 	player.animations.add('right', [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], 20, true);
 	player.animations.add('left', [ 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31], 20, true);
@@ -106,7 +110,11 @@ function useProjectile() {
 
 function update() {
 	//Collisions
-	game.physics.arcade.collide(player, platforms);
+	if(!playerDying){
+		game.physics.arcade.collide(player, platforms);
+		game.physics.arcade.overlap(player, balls, playerHit, null, this);
+	}
+	
 	game.physics.arcade.collide(projectiles, platforms);
 	game.physics.arcade.collide(projectiles, bounds);
 	
@@ -115,7 +123,9 @@ function update() {
 	
 	handleBallPhysics();
 	
-    handlePlayerMovement();
+	if(!playerDying){
+		handlePlayerMovement();
+    }
     
     //Projectile
     for (var i = 0; i < projectiles.children.length; i++) {
@@ -130,13 +140,17 @@ function destroyProjectile(projectile) {
 }
 
 function projectileBallCollision(projectile, ball){
+	//TODO play destroy snowball sound
+	
 	destroyProjectile(projectile);
+	
 	if(ball.key === 'snowball_48'){
 		splitBall(ball, 2);
 	} else if(ball.key === 'snowball_32'){
 		splitBall(ball, 1);
 	}
 	ball.destroy();
+	
 	if(balls.children.length === 0){
 		window.alert("Level complete");
 	}
@@ -149,6 +163,19 @@ function splitBall(original, newBallSize){
 	balls.add(new Ball(newBallSize, -velocityX, velocityY, original.body.x, original.body.y));
 }
 
+function playerHit(player, ball){
+	//TODO play death sound
+	
+	playerDying = true;
+	player.body.collideWorldBounds = false;
+	player.body.velocity.y = -400;
+}
+
+function reset(player){
+	//TODO load current level again
+	window.alert('press F5');
+}
+
 function handleBallPhysics(){
 	if(game.physics.arcade.collide(balls, floor)){
 		for (var i = 0; i < balls.children.length; i++) {
@@ -159,10 +186,6 @@ function handleBallPhysics(){
 		}
 	}
 	game.physics.arcade.collide(balls, platforms);
-}
-
-function loadLevel(levelName){
-	window.alert('Loading ' + levelName);
 }
 
 function handlePlayerMovement(){
