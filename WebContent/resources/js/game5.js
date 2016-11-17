@@ -163,10 +163,19 @@ function playerHit(player, ball){
 	playerDying = true;
 	player.body.collideWorldBounds = false;
 	player.body.velocity.y = -400;
+	player.animations.stop();
+	player.frame = 32;
+	
+	for (var i = 0; i < balls.children.length; i++) {
+		var ball = balls.children[i];
+		ball.body.velocity.setTo(0,0);
+		ball.body.gravity = 0;
+	}
 }
 
 function reset() {
-	alert("refresh de pagina")
+	//loadLevel(cachedLevel);
+	//alert("refresh de pagina")
 }
 
 function handleBallPhysics(){
