@@ -17,7 +17,7 @@ function preload() {
 	game.load.image('ground', '../resources/images/cartoon-roof.jpg');
 	game.load.image('chimney', '../resources/images/chimney.png');
 	game.load.image('star', '../resources/images/present.png');
-	game.load.image('obstacle', '../resources/images/snow.png');
+	game.load.image('obstacle', '../resources/images/snowballs/snow.png');
 	game.load.spritesheet('dude', '../resources/images/santa-walking.png', 91,
 			115);
 }

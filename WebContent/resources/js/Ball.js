@@ -14,7 +14,7 @@ function Ball(size, velocityX, velocityY, positionX, positionY){
 		break;
 	case 3:
 		this.spriteName = 'snowball_48';
-		this.gravity = 750;
+		this.gravity = 850;
 		break;
 	}
 	
