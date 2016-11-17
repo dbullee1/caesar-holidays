@@ -1,4 +1,8 @@
-function Ball(size, angle, velocity){
+function Ball(size, velocityX, velocityY, positionX, positionY){
+	velocityY = velocityY || 0;
+	positionX = positionX || game.world.centerX;
+	positionY = positionY || 25;
+	
 	switch(size){
 	case 1:
 		this.spriteName = 'snowball_16';
@@ -14,12 +18,13 @@ function Ball(size, angle, velocity){
 		break;
 	}
 	
-	var ballPhaserObj = game.add.sprite(game.world.centerX, 25, this.spriteName);
+	var ballPhaserObj = game.add.sprite(positionX, positionY, this.spriteName);
 	game.physics.arcade.enable(ballPhaserObj);
 	ballPhaserObj.body.collideWorldBounds=true;
 	ballPhaserObj.body.bounce.setTo(1,1);
 	ballPhaserObj.body.gravity.y = this.gravity;
-	ballPhaserObj.body.velocity.x = velocity;
+	ballPhaserObj.body.velocity.x = velocityX;
+	ballPhaserObj.body.velocity.y = velocityY;
 	
 	return ballPhaserObj;
 }
