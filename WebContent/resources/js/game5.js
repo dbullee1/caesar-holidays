@@ -13,10 +13,10 @@ var groundSprite;
 
 function preload() {
 	game.load.image('starfield', '../resources/assets/misc/starfield.jpg');
-	
+
 	game.load.image('projectile', '../resources/images/xmas-harpoon.png')
 	game.load.spritesheet('santa', '../resources/images/santa.png', 91, 118);
-	
+
 	game.load.image('ground_invisible', '../resources/images/dak_invisible.png');
 	game.load.image('roof', '../resources/images/cartoon-roof.jpg');
 	game.load.image('roof-ice', '../resources/images/cartoon-roof.jpg');
@@ -40,8 +40,9 @@ var cachedLevel;
 var levelUrl = '../resources/levels/level';
 var levelExtension = '.json'
 var level = 1;
+var finalLevel = 3;
 
-var platforms= {};
+var platforms = {};
 platforms.children = [];
 
 var bounds;
@@ -139,8 +140,12 @@ function projectileBallCollision(projectile, ball) {
 	ball.destroy();
 
 	if (balls.children.length === 0) {
-		level++;
-		loadLevel(getLevel(level)); 
+		if (level === 3) {
+			window.location = "./message";
+		} else {
+			level++;
+			loadLevel(getLevel(level));
+		}
 	}
 }
 
@@ -243,8 +248,8 @@ function loadLevel(levelObject) {
 
 	// caches the level
 	cachedLevel = levelObject
-	
-	//createPlatforms
+
+	// createPlatforms
 	createPlatform(levelPlatforms);
 
 	// destroy projectiles
@@ -290,25 +295,27 @@ function createBalls(levelBalls) {
 }
 
 function createPlatform(levelPlatforms) {
-	if(!!groundSprite) {
+	if (!!groundSprite) {
 		groundSprite.destroy();
 	}
-	if(!!floor) {
+	if (!!floor) {
 		floor.destroy();
 	}
-	
-	let i = platforms.children.length;
+
+	let
+	i = platforms.children.length;
 	while (i--) {
 		platforms.children[i].destroy();
 	}
-	
-	for(i = 0; i < levelPlatforms.length; i++) {
-		let platform = levelPlatforms[i];
+
+	for (i = 0; i < levelPlatforms.length; i++) {
+		let
+		platform = levelPlatforms[i];
 		platforms.add(new Platform(platform.type, platform.position.x, platform.position.y, platform.width, platform.height));
 	}
-	
-	//fallback
-	if(platforms.children.length == 0) {
+
+	// fallback
+	if (platforms.children.length == 0) {
 		groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'roof');
 		floor = platforms.create(0, game.world.height - 32, 'ground_invisible');
 		floor.body.immovable = true;

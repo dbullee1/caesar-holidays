@@ -5,8 +5,6 @@ M Platforms (Dennis)
 	S Verschillende types vloer
 		- Ijs
 		- Modder
-M Redirect naar message (Blocked)
-	- Laatste level, geen ballen meer
 M Andere hoofden
 	- 2 dummy sprites
 	- Parameter /Experts
