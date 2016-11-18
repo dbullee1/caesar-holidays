@@ -13,10 +13,16 @@ var groundSprite;
 
 function preload() {
 	game.load.image('starfield', '../resources/assets/misc/starfield.jpg');
-	game.load.image('ground_invisible', '../resources/images/dak_invisible.png');
-	game.load.image('roof', '../resources/images/cartoon-roof.jpg');
+	
 	game.load.image('projectile', '../resources/images/xmas-harpoon.png')
 	game.load.spritesheet('santa', '../resources/images/santa.png', 91, 118);
+	
+	game.load.image('ground_invisible', '../resources/images/dak_invisible.png');
+	game.load.image('roof', '../resources/images/cartoon-roof.jpg');
+	game.load.image('roof-ice', '../resources/images/cartoon-roof.jpg');
+	game.load.image('normal', '../resources/images/cartoon-roof.jpg');
+	game.load.image('ice', '../resources/images/cartoon-roof.jpg');
+	game.load.image('mud', '../resources/images/cartoon-roof.jpg');
 
 	game.load.image('snowball_16', '../resources/images/snowballs/snowball_16.png');
 	game.load.image('snowball_32', '../resources/images/snowballs/snowball_32.png');
@@ -102,8 +108,6 @@ function update() {
 		handlePlayerMovement();
 
 		game.physics.arcade.collide(projectiles, platforms);
-		game.physics.arcade.collide(projectiles, bounds);
-
 		game.physics.arcade.overlap(projectiles, bounds, destroyProjectile, null, this);
 		game.physics.arcade.overlap(projectiles, balls, projectileBallCollision, null, this);
 
@@ -135,7 +139,8 @@ function projectileBallCollision(projectile, ball) {
 	ball.destroy();
 
 	if (balls.children.length === 0) {
-		window.alert("Level complete");
+		level++;
+		loadLevel(getLevel(level)); 
 	}
 }
 
@@ -294,17 +299,17 @@ function createPlatform(levelPlatforms) {
 	
 	let i = platforms.children.length;
 	while (i--) {
-		platsforms.children[i].destroy();
+		platforms.children[i].destroy();
 	}
 	
-//	for(i = 0; i < levelPlatforms.length; i++) {
-//		let platform = levelPlatforms[i];
-//		platforms.add(new Platform(platform.type, platform.position.x, platform.position.y, platform.width, platform.height));
-//	}
+	for(i = 0; i < levelPlatforms.length; i++) {
+		let platform = levelPlatforms[i];
+		platforms.add(new Platform(platform.type, platform.position.x, platform.position.y, platform.width, platform.height));
+	}
 	
 	//fallback
 	if(platforms.children.length == 0) {
-		groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'ground');
+		groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'roof');
 		floor = platforms.create(0, game.world.height - 32, 'ground_invisible');
 		floor.body.immovable = true;
 	}

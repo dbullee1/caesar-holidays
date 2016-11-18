@@ -6,15 +6,15 @@ function Ball(size, velocityX, velocityY, positionX, positionY){
 	switch(size){
 	case 1:
 		this.spriteName = 'snowball_16';
-		this.gravity = 1250;
+		this.gravity = 1000;
 		break;
 	case 2:
 		this.spriteName = 'snowball_32';
-		this.gravity = 1000;
+		this.gravity = 850;
 		break;
 	case 3:
 		this.spriteName = 'snowball_48';
-		this.gravity = 850;
+		this.gravity = 700;
 		break;
 	}
 	

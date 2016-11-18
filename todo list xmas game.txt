@@ -1,7 +1,6 @@
 M Levels (Hong)
 	- Level overgang
 M Platforms (Dennis)
-	M verschillende width
 	S Repeating sprite
 	S Verschillende types vloer
 		- Ijs
