@@ -168,7 +168,7 @@ function splitBall(original, newBallSize) {
 
 function playerHit(player, ball) {
 	// TODO play death sound
-
+	$(".audio")[0].cloneNode(true).play();
 	playerDying = true;
 	player.body.collideWorldBounds = false;
 	player.body.velocity.y = -400;

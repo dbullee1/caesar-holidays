@@ -4,9 +4,8 @@ M Platforms (Dennis)
 		- Ijs
 		- Modder
 M Audio
-	- Doodgaan = Auw (Hong)
 	- Harpoon = ?
-	- Sneeuwball kapot = ? 
+	- Sneeuwball kapot = (Hong)
 S Sneeuw animatie/overlay
 C Menu / level selection
 C Redirect in menu
