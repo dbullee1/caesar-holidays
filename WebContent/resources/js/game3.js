@@ -13,8 +13,8 @@ var groundSprite;
 
 function preload() {
 	game.load.image('sky', '../resources/assets/misc/starfield.jpg');
-	game.load.image('ground_invisible', '../resources/images/dak_invisible.png');
-	game.load.image('ground', '../resources/images/cartoon-roof.jpg');
+	game.load.image('ground_invisible', '../resources/images/platforms/dak_invisible.png');
+	game.load.image('ground', '../resources/images/platforms/cartoon-roof.jpg');
 	game.load.image('chimney', '../resources/images/chimney.png');
 	game.load.image('star', '../resources/images/present.png');
 	game.load.image('obstacle', '../resources/images/snowballs/snow.png');
