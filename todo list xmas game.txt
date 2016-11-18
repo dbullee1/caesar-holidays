@@ -1,15 +1,10 @@
-M Levels (Hong)
-	- Level overgang
 M Platforms (Dennis)
 	S Repeating sprite
 	S Verschillende types vloer
 		- Ijs
 		- Modder
-M Andere hoofden
-	- 2 dummy sprites
-	- Parameter /Experts
 M Audio
-	- Doodgaan = Auw 
+	- Doodgaan = Auw (Hong)
 	- Harpoon = ?
 	- Sneeuwball kapot = ? 
 S Sneeuw animatie/overlay

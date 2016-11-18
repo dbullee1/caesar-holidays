@@ -19,6 +19,9 @@
 <script  type="text/javascript" src="../resources/js/phaser.js"></script>	
 </head>
 <body>
+	<script type="text/javascript">
+		var theme = "${theme}";
+	</script>
 		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 			<div class="container-fluid">
 				<div class="navbar-header">
