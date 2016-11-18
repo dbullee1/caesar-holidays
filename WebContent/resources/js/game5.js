@@ -14,7 +14,7 @@ var groundSprite;
 function preload() {
 	game.load.image('starfield', '../resources/assets/misc/starfield.jpg');
 	game.load.image('ground_invisible', '../resources/images/dak_invisible.png');
-	game.load.image('ground', '../resources/images/cartoon-roof.jpg');
+	game.load.image('roof', '../resources/images/cartoon-roof.jpg');
 	game.load.image('projectile', '../resources/images/xmas-harpoon.png')
 	game.load.spritesheet('santa', '../resources/images/santa.png', 91, 118);
 
@@ -51,7 +51,7 @@ function create() {
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	projectileStartLocationY = game.world.height - 100
 
-	groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'ground');
+	groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'roof');
 
 	// Platforms
 	platforms = game.add.group();
