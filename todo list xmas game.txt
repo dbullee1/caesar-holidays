@@ -1,11 +1,9 @@
-M Levels (Hong)
-	- Level overgang
 M Platforms (Dennis)
 	S Repeating sprite
 	S Verschillende types vloer
 		- Ijs
 		- Modder
-M Andere hoofden
+M Andere hoofden (Hong)
 	- 2 dummy sprites
 	- Parameter /Experts
 M Audio
