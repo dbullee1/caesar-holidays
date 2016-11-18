@@ -13,8 +13,8 @@ var groundSprite;
 
 function preload() {
 	game.load.image('starfield', '../resources/assets/misc/starfield.jpg');
-	game.load.image('ground_invisible', '../resources/images/dak_invisible.png');
-	game.load.image('ground', '../resources/images/cartoon-roof.jpg');
+	game.load.image('ground_invisible', '../resources/images/platforms/dak_invisible.png');
+	game.load.image('ground', '../resources/images/platforms/cartoon-roof.jpg');
 	game.load.image('projectile', '../resources/images/xmas-harpoon.png')
 	game.load.spritesheet('santa', '../resources/images/santa.png', 91,	118);
 	

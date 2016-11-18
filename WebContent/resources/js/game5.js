@@ -25,12 +25,12 @@ function preload() {
 	
 	
 
-	game.load.image('ground_invisible', '../resources/images/dak_invisible.png');
-	game.load.image('roof', '../resources/images/cartoon-roof.jpg');
-	game.load.image('roof-ice', '../resources/images/cartoon-roof.jpg');
-	game.load.image('normal', '../resources/images/cartoon-roof.jpg');
-	game.load.image('ice', '../resources/images/cartoon-roof.jpg');
-	game.load.image('mud', '../resources/images/cartoon-roof.jpg');
+	game.load.image('ground_invisible', '../resources/images/platforms/dak_invisible.png');
+	game.load.image('roof', '../resources/images/platforms/cartoon-roof.jpg');
+	game.load.image('roof-ice', '../resources/images/platforms/roof-ice.png');
+	game.load.image('normal', '../resources/images/platforms/cartoon-roof.jpg');
+	game.load.image('ice', '../resources/images/platforms/roof-ice.png');
+	game.load.image('mud', '../resources/images/platforms/cartoon-roof.jpg');
 
 	game.load.image('snowball_16', '../resources/images/snowballs/snowball_16.png');
 	game.load.image('snowball_32', '../resources/images/snowballs/snowball_32.png');
@@ -39,6 +39,7 @@ function preload() {
 
 var player;
 var playerDying;
+var playerOnIce;
 
 var numOfProjectiles = 1;
 var projectilesInUse = 0;
@@ -47,10 +48,12 @@ var projectiles;
 var cachedLevel;
 var levelUrl = '../resources/levels/level';
 var levelExtension = '.json'
-var level = 1;
+var level = 2;
 var finalLevel = 3;
 
 var platforms = {};
+platforms.children = [];
+var icePlatforms = {};
 platforms.children = [];
 
 var bounds;
@@ -73,6 +76,9 @@ function create() {
 	// Platforms
 	platforms = game.add.group();
 	platforms.enableBody = true;
+	
+	icePlatforms = game.add.group();
+	icePlatforms.enableBody = true;
 
 	bounds = game.add.group();
 	bounds.enableBody = true;
@@ -113,6 +119,7 @@ function update() {
 	// Collisions
 	if (!playerDying) {
 		game.physics.arcade.collide(player, platforms);
+		playerOnIce = game.physics.arcade.collide(player, icePlatforms);
 		game.physics.arcade.overlap(player, balls, playerHit, null, this);
 		handlePlayerMovement();
 
@@ -196,11 +203,22 @@ function handleBallPhysics() {
 		}
 	}
 	game.physics.arcade.collide(balls, platforms);
+	game.physics.arcade.collide(balls, icePlatforms);
 }
 
 function handlePlayerMovement() {
 	if (!!player) {
-		player.body.velocity.x = 0;
+		if(playerOnIce){
+			let slideDecrease = 4;
+			if(player.body.velocity.x < 0){
+				player.body.velocity.x += slideDecrease;
+			} else if(player.body.velocity.x > 0){
+				player.body.velocity.x -= slideDecrease;
+			}
+		} else{
+			player.body.velocity.x = 0;
+		}
+		
 		if (game.input.activePointer.isDown && player.body.touching.down) {
 			useProjectile();
 		}
@@ -317,9 +335,13 @@ function createPlatform(levelPlatforms) {
 	}
 
 	for (i = 0; i < levelPlatforms.length; i++) {
-		let
-		platform = levelPlatforms[i];
-		platforms.add(new Platform(platform.type, platform.position.x, platform.position.y, platform.width, platform.height));
+		let platform = levelPlatforms[i];
+		let platformObject = new Platform(platform.type, platform.position.x, platform.position.y, platform.width, platform.height);
+		if(platform.type === 'ice'){
+			icePlatforms.add(platformObject);
+		} else{
+			platforms.add(platformObject);
+		}
 	}
 
 	// fallback

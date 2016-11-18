@@ -1,8 +1,7 @@
 {
 	"name": "level 1",
 	"background": "starfield",
-	"balls": [
-	{
+	"balls": [{
 		"size": 2,
 		"velocity": 200
 	},{
@@ -18,19 +17,19 @@
 	"platforms": [{
 			"type": "roof",
 			"position": {
+				"x": 400,
+				"y": 568
+			},
+			"width": 400,
+			"height": 32
+		}, {
+			"type": "ice",
+			"position": {
 				"x": 0,
 				"y": 568
 			},
-			"width": 800,
+			"width": 400,
 			"height": 32
-		}, {
-			"type": "roof-ice",
-			"position": {
-				"x": 350,
-				"y": 300
-			},
-			"width": 100,
-			"height": 25
 		}
 	]
 }

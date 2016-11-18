@@ -5,8 +5,8 @@ var background;
 
 function preload() {
 	game.load.image('sky', '../resources/assets/tests/sky.png');
-    game.load.image('ground', '../resources/images/cartoon-roof.jpg');
-    game.load.image('ground_invisible', '../resources/images/dak_invisible.png');
+    game.load.image('ground', '../resources/images/platforms/cartoon-roof.jpg');
+    game.load.image('ground_invisible', '../resources/images/platforms/dak_invisible.png');
     game.load.image('star', '../resources/assets/particlestorm/star.png');
     game.load.image('snowball_16', '../resources/images/snowballs/snowball_16.png');
     game.load.image('snowball_32', '../resources/images/snowballs/snowball_32.png');
