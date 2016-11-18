@@ -3,11 +3,8 @@ M Platforms (Dennis)
 	S Verschillende types vloer
 		- Ijs
 		- Modder
-M Andere hoofden (Hong)
-	- 2 dummy sprites
-	- Parameter /Experts
 M Audio
-	- Doodgaan = Auw 
+	- Doodgaan = Auw (Hong)
 	- Harpoon = ?
 	- Sneeuwball kapot = ? 
 S Sneeuw animatie/overlay

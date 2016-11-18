@@ -15,7 +15,15 @@ function preload() {
 	game.load.image('starfield', '../resources/assets/misc/starfield.jpg');
 
 	game.load.image('projectile', '../resources/images/xmas-harpoon.png')
-	game.load.spritesheet('santa', '../resources/images/santa.png', 91, 118);
+	if(theme == "EXPERTS") {
+		game.load.spritesheet('santa', '../resources/images/santa - experts.png', 91, 118);
+	} else if(theme == "TENDERS") {
+		game.load.spritesheet('santa', '../resources/images/santa - tenders.png', 91, 118);
+	} else {
+		game.load.spritesheet('santa', '../resources/images/santa.png', 91, 118);
+	}
+	
+	
 
 	game.load.image('ground_invisible', '../resources/images/dak_invisible.png');
 	game.load.image('roof', '../resources/images/cartoon-roof.jpg');
