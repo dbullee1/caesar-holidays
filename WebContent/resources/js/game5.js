@@ -8,10 +8,22 @@ var game = new Phaser.Game(width, height, Phaser.AUTO, 'game', {
 });
 game.state.add('Game', game);
 
+var playerHitSound;
+var backgroundMusic;
+
 var background;
 var groundSprite;
 
+
+
 function preload() {
+	
+	//audio
+	game.load.audio('bgmusic', '../resources/sounds/bgmusic.mp3');
+	game.load.audio('auw', '../resources/sounds/auw.mp3');
+	
+	
+	//sprites
 	game.load.image('starfield', '../resources/assets/misc/starfield.jpg');
 
 	game.load.image('projectile', '../resources/images/xmas-harpoon.png')
@@ -61,49 +73,52 @@ var floor;
 
 var balls;
 
-var score = 0;
-var scoreText;
+var levelProgressText;
 
 var playerVelocity = 500;
 var projectileStartLocationY;
 
 function create() {
+	//game
 	game.physics.startSystem(Phaser.Physics.ARCADE);
-	projectileStartLocationY = game.world.height - 100
-
-	groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'roof');
-
-	// Platforms
+	createSnowEmitter();
+	
+	//audio
+	backgroundMusic = game.add.audio('bgmusic');
+	backgroundMusic.onStop.add(startBackgroundMusic, this);
+	
+	playerHitSound = game.add.audio('auw');
+	
+	//groups
 	platforms = game.add.group();
 	platforms.enableBody = true;
 	
 	icePlatforms = game.add.group();
 	icePlatforms.enableBody = true;
-
+	
 	bounds = game.add.group();
 	bounds.enableBody = true;
-
-	var top = bounds.create(0, -32, 'ground_invisible');
-	top.body.immovable = true;
-
-	cursors = game.input.keyboard.createCursorKeys();
-
-	// Balls
-	balls = game.add.group();
-
-	// Score
-	scoreText = scoreText = game.add.text(10, 10, 'level: ' + level + '/' + finalLevel, {
+	
+	projectiles = game.add.group();
+	projectiles.enableBody = true;
+	
+	balls = game.add.group();	
+	
+	//sprites
+	groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'roof');
+	levelProgressText = game.add.text(10, 10, 'level: ' + level + '/' + finalLevel, {
 		fontSize : '32px',
 		fill : '#ffffff'
 	});
+	var top = bounds.create(0, -32, 'ground_invisible');
+	top.body.immovable = true;
 
-	// projectiles
-	projectiles = game.add.group();
-	projectiles.enableBody = true;
+	// properties
+	projectileStartLocationY = game.world.height - 100
+	cursors = game.input.keyboard.createCursorKeys();
 
+	startBackgroundMusic();
 	loadLevel(getLevel(level));
-	
-	createSnowEmitter();
 }
 
 function createSnowEmitter(){
@@ -190,8 +205,7 @@ function splitBall(original, newBallSize) {
 }
 
 function playerHit(player, ball) {
-	// TODO play death sound
-	$(".audio")[0].cloneNode(true).play();
+	playerHitSound.play();
 	playerDying = true;
 	player.body.collideWorldBounds = false;
 	player.body.velocity.y = -400;
@@ -267,7 +281,7 @@ function getLevel(levelName) {
 	}).done(function(data) {
 		levelObject = data;
 	});
-	scoreText.setText('level: ' + level + '/' + finalLevel);
+	levelProgressText.setText('level: ' + level + '/' + finalLevel);
 	return levelObject;
 }
 
@@ -376,4 +390,8 @@ function createBackground(backgroundName) {
 	}
 	background = game.add.tileSprite(0, 0, width, height, backgroundName);
 	game.world.sendToBack(background);
+}
+
+function startBackgroundMusic() {
+	backgroundMusic.play();
 }

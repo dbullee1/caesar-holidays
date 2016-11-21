@@ -46,9 +46,9 @@
 			</div>
 		</nav>
 		<div id="game" class="game"></div>
-		<audio class="audio" preload="auto">
-		  	<source src="../resources/sounds/auw.mp3" type="audio/mpeg">
-		</audio>
+<!-- 		<audio class="audio" preload="auto"> -->
+<!-- 		  	<source src="../resources/sounds/auw.mp3" type="audio/mpeg"> -->
+<!-- 		</audio> -->
 		<script src="../resources/js/game5.js"></script>
 </body>
 </html>
