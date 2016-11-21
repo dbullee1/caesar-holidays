@@ -37,6 +37,8 @@ function preload() {
 	game.load.image('snowball_48', '../resources/images/snowballs/snowball_48.png');
 }
 
+var spaceBar;
+
 var player;
 var playerDying;
 var playerOnIce;
@@ -48,7 +50,7 @@ var projectiles;
 var cachedLevel;
 var levelUrl = '../resources/levels/level';
 var levelExtension = '.json'
-var level = 1;
+var level = 2;
 var finalLevel = 3;
 
 var platforms = {};
@@ -87,9 +89,11 @@ function create() {
 	top.body.immovable = true;
 
 	cursors = game.input.keyboard.createCursorKeys();
+	//this.spaceBar = game.input.keyboard.addKeys({ 'up': Phaser.Keyboard.SPACEBAR });
 
 	// Balls
 	balls = game.add.group();
+	balls.enableBody = true;
 
 	// Score
 	scoreText = scoreText = game.add.text(10, 10, 'level: ' + level + '/' + finalLevel, {
@@ -132,6 +136,10 @@ function useProjectile() {
 }
 
 function update() {
+	
+	if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
+		
+	}
 	// Collisions
 	if (!playerDying) {
 		game.physics.arcade.collide(player, platforms);
@@ -210,45 +218,85 @@ function reset() {
 }
 
 function handleBallPhysics() {
-	if (game.physics.arcade.collide(balls, floor)) {
-		for (var i = 0; i < balls.children.length; i++) {
-			var ball = balls.children[i];
-			if (ball.body.touching.down) {
-				ball.body.velocity.y = -900;
-			}
-		}
+	if (floor != undefined) {
+		game.physics.arcade.collide(balls, floor, ballBounce, null, this)
 	}
 	
-	game.physics.arcade.collide(balls, platforms);
-	game.physics.arcade.collide(balls, icePlatforms);
+	game.physics.arcade.collide(balls, platforms, ballBounce, null, this);
+	game.physics.arcade.collide(balls, icePlatforms, ballBounce, null, this);
+}
+
+function ballBounce(){
+	for (var i = 0; i < balls.children.length; i++) {
+		var ball = balls.children[i];
+		if (ball.body.touching.down) {
+			ball.body.velocity.y = -900;
+		}
+	}
 }
 
 function handlePlayerMovement() {
 	if (!!player) {
-		if(playerOnIce){
-			let slideDecrease = 4;
-			if(player.body.velocity.x < 0){
-				player.body.velocity.x += slideDecrease;
-			} else if(player.body.velocity.x > 0){
-				player.body.velocity.x -= slideDecrease;
-			}
-		} else{
-			player.body.velocity.x = 0;
-		}
-		
-		if (game.input.activePointer.isDown && player.body.touching.down) {
+		if ((game.input.activePointer.isDown || game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) 
+				&& player.body.touching.down) {
 			useProjectile();
 		}
-
+		
+		let slideDecrease = 3;
+		let newVelocity = 0;
+		let maxVelocity = 250;
+		
+		if(playerOnIce){
+			if(player.body.velocity.x < 0){
+				newVelocity = player.body.velocity.x + slideDecrease;
+			} else if(player.body.velocity.x > 0){
+				newVelocity = player.body.velocity.x - slideDecrease;
+			}
+		}
+		
+		slideDecrease++;
+		
 		if (cursors.left.isDown) {
-			player.body.velocity.x = -250;
+			if(playerOnIce){
+				if(player.body.velocity.x > 0){
+					newVelocity = player.body.velocity.x - slideDecrease;
+				} else{
+					let baseVelocity = player.body.velocity.x;
+					if(baseVelocity === 0){
+						baseVelocity = -1;
+					}
+					newVelocity = baseVelocity + (baseVelocity * 1.1);
+				}
+			} else{
+				newVelocity = -maxVelocity;
+			}
 			player.animations.play('left');
 		} else if (cursors.right.isDown) {
-			player.body.velocity.x = 250;
+			if(playerOnIce){
+				if(player.body.velocity.x < 0){
+					newVelocity = player.body.velocity.x + slideDecrease;
+				} else{
+					let baseVelocity = player.body.velocity.x;
+					if(baseVelocity === 0){
+						baseVelocity = 1;
+					}
+					newVelocity = baseVelocity + (baseVelocity * 1.1);
+				}
+			} else{
+				newVelocity = maxVelocity;
+			}
 			player.animations.play('right');
 		} else {
 			player.animations.stop();
 			player.frame = 32;
+		}
+		
+		if(newVelocity > maxVelocity){
+			player.body.velocity.x = maxVelocity;
+		} else if(newVelocity < -maxVelocity) {
+			player.body.velocity.x = -maxVelocity;
+		}else{
+			player.body.velocity.x = newVelocity;
 		}
 	}
 }
