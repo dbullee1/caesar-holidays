@@ -33,7 +33,7 @@ public class GameController {
 	}
 
 	@RequestMapping(value = { "/game5" }, method = RequestMethod.GET)
-	public String getGamePage5(ModelMap model, @RequestParam(value = "theme", required = false) String theme) {
+	public String getGamePage5(ModelMap model, @RequestParam(value = "branch", required = false) String theme) {
 		Theme modelTheme = null;
 		if (!StringUtils.isEmpty(theme)) {
 			try {
