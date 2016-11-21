@@ -23,8 +23,8 @@ function preload() {
 		game.load.spritesheet('santa', '../resources/images/santa.png', 91, 118);
 	}
 	
+	game.load.spritesheet('snowflakes', '../resources/images/snowflakes.png', 17, 17);
 	
-
 	game.load.image('ground_invisible', '../resources/images/platforms/dak_invisible.png');
 	game.load.image('roof', '../resources/images/platforms/cartoon-roof.jpg');
 	game.load.image('roof-ice', '../resources/images/platforms/roof-ice.png');
@@ -48,7 +48,7 @@ var projectiles;
 var cachedLevel;
 var levelUrl = '../resources/levels/level';
 var levelExtension = '.json'
-var level = 2;
+var level = 1;
 var finalLevel = 3;
 
 var platforms = {};
@@ -90,10 +90,9 @@ function create() {
 
 	// Balls
 	balls = game.add.group();
-	balls.enableBody = true;
 
 	// Score
-	scoreText = scoreText = game.add.text(10, 10, 'level: ' + level + '/4', {
+	scoreText = scoreText = game.add.text(10, 10, 'level: ' + level + '/' + finalLevel, {
 		fontSize : '32px',
 		fill : '#ffffff'
 	});
@@ -103,6 +102,23 @@ function create() {
 	projectiles.enableBody = true;
 
 	loadLevel(getLevel(level));
+	
+	createSnowEmitter();
+}
+
+function createSnowEmitter(){
+	var back_emitter = game.add.emitter(game.world.centerX, -32, 400);
+	game.world.bringToTop(back_emitter);
+    back_emitter.makeParticles('snowflakes', [0, 1, 2, 3, 4, 5]);
+    back_emitter.maxParticleScale = 0.6;
+    back_emitter.minParticleScale = 0.2;
+    back_emitter.setYSpeed(20, 100);
+    back_emitter.gravity = 0;
+    back_emitter.width = game.world.width;
+    back_emitter.minRotation = 0;
+    back_emitter.maxRotation = 40;
+    
+    back_emitter.start(false, 14000, 20);
 }
 
 function useProjectile() {
@@ -202,6 +218,7 @@ function handleBallPhysics() {
 			}
 		}
 	}
+	
 	game.physics.arcade.collide(balls, platforms);
 	game.physics.arcade.collide(balls, icePlatforms);
 }
@@ -250,6 +267,7 @@ function getLevel(levelName) {
 	}).done(function(data) {
 		levelObject = data;
 	});
+	scoreText.setText('level: ' + level + '/' + finalLevel);
 	return levelObject;
 }
 
