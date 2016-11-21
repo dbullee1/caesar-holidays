@@ -8,34 +8,14 @@ var game = new Phaser.Game(width, height, Phaser.AUTO, 'game', {
 });
 game.state.add('Game', game);
 
+var playerHitSound;
+var snowballSplitSound;
+var harpoonHitRoofSound;
+var harpoonLaunchSound;
+var backgroundMusic;
+
 var background;
 var groundSprite;
-
-function preload() {
-	game.load.image('starfield', '../resources/assets/misc/starfield.jpg');
-
-	game.load.image('projectile', '../resources/images/xmas-harpoon.png')
-	if(theme == "EXPERTS") {
-		game.load.spritesheet('santa', '../resources/images/santa - experts.png', 91, 118);
-	} else if(theme == "TENDERS") {
-		game.load.spritesheet('santa', '../resources/images/santa - tenders.png', 91, 118);
-	} else {
-		game.load.spritesheet('santa', '../resources/images/santa.png', 91, 118);
-	}
-	
-	game.load.spritesheet('snowflakes', '../resources/images/snowflakes.png', 17, 17);
-	
-	game.load.image('ground_invisible', '../resources/images/platforms/dak_invisible.png');
-	game.load.image('roof', '../resources/images/platforms/cartoon-roof.jpg');
-	game.load.image('roof-ice', '../resources/images/platforms/roof-ice.png');
-	game.load.image('normal', '../resources/images/platforms/cartoon-roof.jpg');
-	game.load.image('ice', '../resources/images/platforms/roof-ice.png');
-	game.load.image('mud', '../resources/images/platforms/cartoon-roof.jpg');
-
-	game.load.image('snowball_16', '../resources/images/snowballs/snowball_16.png');
-	game.load.image('snowball_32', '../resources/images/snowballs/snowball_32.png');
-	game.load.image('snowball_48', '../resources/images/snowballs/snowball_48.png');
-}
 
 var spaceBar;
 
@@ -63,66 +43,106 @@ var floor;
 
 var balls;
 
-var score = 0;
-var scoreText;
+var levelProgressText;
 
 var playerVelocity = 500;
 var projectileStartLocationY;
 
+function preload() {
+
+	// audio
+	game.load.audio('bgmusic', '../resources/sounds/bgmusic.mp3');
+	game.load.audio('auw', '../resources/sounds/auw.mp3');
+	game.load.audio('snowball_split', '../resources/sounds/snowball_split.mp3')
+	game.load.audio('harpoon_roof', '../resources/sounds/harpoon_roof.mp3')
+	game.load.audio('harpoon_launch', '../resources/sounds/harpoon_launch.mp3')
+
+	// sprites
+	game.load.image('starfield', '../resources/assets/misc/starfield.jpg');
+
+	game.load.image('projectile', '../resources/images/xmas-harpoon.png')
+	if (theme == "EXPERTS") {
+		game.load.spritesheet('santa', '../resources/images/santa - experts.png', 91, 118);
+	} else if (theme == "TENDERS") {
+		game.load.spritesheet('santa', '../resources/images/santa - tenders.png', 91, 118);
+	} else {
+		game.load.spritesheet('santa', '../resources/images/santa.png', 91, 118);
+	}
+
+	game.load.spritesheet('snowflakes', '../resources/images/snowflakes.png', 17, 17);
+
+	game.load.image('ground_invisible', '../resources/images/platforms/dak_invisible.png');
+	game.load.image('roof', '../resources/images/platforms/cartoon-roof.jpg');
+	game.load.image('roof-ice', '../resources/images/platforms/roof-ice.png');
+	game.load.image('normal', '../resources/images/platforms/cartoon-roof.jpg');
+	game.load.image('ice', '../resources/images/platforms/roof-ice.png');
+	game.load.image('mud', '../resources/images/platforms/cartoon-roof.jpg');
+
+	game.load.image('snowball_16', '../resources/images/snowballs/snowball_16.png');
+	game.load.image('snowball_32', '../resources/images/snowballs/snowball_32.png');
+	game.load.image('snowball_48', '../resources/images/snowballs/snowball_48.png');
+}
+
 function create() {
+	// game
 	game.physics.startSystem(Phaser.Physics.ARCADE);
-	projectileStartLocationY = game.world.height - 100
+	createSnowEmitter();
 
-	groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'roof');
+	// audio
+	backgroundMusic = game.add.audio('bgmusic');
+	backgroundMusic.onStop.add(startBackgroundMusic, this);
 
-	// Platforms
+	playerHitSound = game.add.audio('auw');
+	snowballSplitSound = game.add.audio('snowball_split');
+	harpoonHitRoofSound = game.add.audio('harpoon_roof');
+	harpoonLaunchSound = game.add.audio('harpoon_launch');
+
+	// groups
 	platforms = game.add.group();
 	platforms.enableBody = true;
-	
+
 	icePlatforms = game.add.group();
 	icePlatforms.enableBody = true;
 
 	bounds = game.add.group();
 	bounds.enableBody = true;
 
-	var top = bounds.create(0, -32, 'ground_invisible');
-	top.body.immovable = true;
-
-	cursors = game.input.keyboard.createCursorKeys();
-	//this.spaceBar = game.input.keyboard.addKeys({ 'up': Phaser.Keyboard.SPACEBAR });
-
-	// Balls
-	balls = game.add.group();
-	balls.enableBody = true;
-
-	// Score
-	scoreText = scoreText = game.add.text(10, 10, 'level: ' + level + '/' + finalLevel, {
-		fontSize : '32px',
-		fill : '#ffffff'
-	});
-
-	// projectiles
 	projectiles = game.add.group();
 	projectiles.enableBody = true;
 
+	balls = game.add.group();
+	balls.enableBody = true;
+
+	// sprites
+	groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'roof');
+	levelProgressText = game.add.text(10, 10, 'level: ' + level + '/' + finalLevel, {
+		fontSize : '32px',
+		fill : '#ffffff'
+	});
+	var top = bounds.create(0, -32, 'ground_invisible');
+	top.body.immovable = true;
+
+	// properties
+	projectileStartLocationY = game.world.height - 100
+	cursors = game.input.keyboard.createCursorKeys();
+
+	startBackgroundMusic();
 	loadLevel(getLevel(level));
-	
-	createSnowEmitter();
 }
 
-function createSnowEmitter(){
+function createSnowEmitter() {
 	var back_emitter = game.add.emitter(game.world.centerX, -32, 400);
 	game.world.bringToTop(back_emitter);
-    back_emitter.makeParticles('snowflakes', [0, 1, 2, 3, 4, 5]);
-    back_emitter.maxParticleScale = 0.6;
-    back_emitter.minParticleScale = 0.2;
-    back_emitter.setYSpeed(20, 100);
-    back_emitter.gravity = 0;
-    back_emitter.width = game.world.width;
-    back_emitter.minRotation = 0;
-    back_emitter.maxRotation = 40;
-    
-    back_emitter.start(false, 14000, 20);
+	back_emitter.makeParticles('snowflakes', [ 0, 1, 2, 3, 4, 5 ]);
+	back_emitter.maxParticleScale = 0.6;
+	back_emitter.minParticleScale = 0.2;
+	back_emitter.setYSpeed(20, 100);
+	back_emitter.gravity = 0;
+	back_emitter.width = game.world.width;
+	back_emitter.minRotation = 0;
+	back_emitter.maxRotation = 40;
+
+	back_emitter.start(false, 14000, 20);
 }
 
 function useProjectile() {
@@ -131,7 +151,8 @@ function useProjectile() {
 		startLocationX = player.body.x + (player.width / 4);
 		var projectile = projectiles.create(startLocationX, projectileStartLocationY, 'projectile');
 		projectilesInUse++;
-		game.world.bringToTop(groundSprite);
+		//game.world.bringToTop(groundSprite);
+		harpoonLaunchSound.play();
 	}
 }
 
@@ -148,7 +169,7 @@ function update() {
 		handlePlayerMovement();
 
 		game.physics.arcade.collide(projectiles, platforms);
-		game.physics.arcade.overlap(projectiles, bounds, destroyProjectile, null, this);
+		game.physics.arcade.overlap(projectiles, bounds, projectileHitBounds, null, this);
 		game.physics.arcade.overlap(projectiles, balls, projectileBallCollision, null, this);
 
 		handleBallPhysics();
@@ -161,14 +182,18 @@ function update() {
 	}
 }
 
+function projectileHitBounds(projectile) {
+	harpoonHitRoofSound.play();
+	destroyProjectile(projectile);
+}
+
 function destroyProjectile(projectile) {
 	projectile.destroy();
 	projectilesInUse--;
 }
 
 function projectileBallCollision(projectile, ball) {
-	// TODO play destroy snowball sound
-
+	snowballSplitSound.play();
 	destroyProjectile(projectile);
 
 	if (ball.key === 'snowball_48') {
@@ -198,8 +223,7 @@ function splitBall(original, newBallSize) {
 }
 
 function playerHit(player, ball) {
-	// TODO play death sound
-	$(".audio")[0].cloneNode(true).play();
+	playerHitSound.play();
 	playerDying = true;
 	player.body.collideWorldBounds = false;
 	player.body.velocity.y = -400;
@@ -221,7 +245,7 @@ function handleBallPhysics() {
 	if (floor != undefined) {
 		game.physics.arcade.collide(balls, floor, ballBounce, null, this)
 	}
-	
+
 	game.physics.arcade.collide(balls, platforms, ballBounce, null, this);
 	game.physics.arcade.collide(balls, icePlatforms, ballBounce, null, this);
 }
@@ -253,7 +277,7 @@ function handlePlayerMovement() {
 				newVelocity = player.body.velocity.x - slideDecrease;
 			}
 		}
-		
+
 		slideDecrease++;
 		
 		if (cursors.left.isDown) {
@@ -315,7 +339,7 @@ function getLevel(levelName) {
 	}).done(function(data) {
 		levelObject = data;
 	});
-	scoreText.setText('level: ' + level + '/' + finalLevel);
+	levelProgressText.setText('level: ' + level + '/' + finalLevel);
 	return levelObject;
 }
 
@@ -401,11 +425,13 @@ function createPlatform(levelPlatforms) {
 	}
 
 	for (i = 0; i < levelPlatforms.length; i++) {
-		let platform = levelPlatforms[i];
-		let platformObject = new Platform(platform.type, platform.position.x, platform.position.y, platform.width, platform.height);
-		if(platform.type === 'ice'){
+		let
+		platform = levelPlatforms[i];
+		let
+		platformObject = new Platform(platform.type, platform.position.x, platform.position.y, platform.width, platform.height);
+		if (platform.type === 'ice') {
 			icePlatforms.add(platformObject);
-		} else{
+		} else {
 			platforms.add(platformObject);
 		}
 	}
@@ -424,4 +450,8 @@ function createBackground(backgroundName) {
 	}
 	background = game.add.tileSprite(0, 0, width, height, backgroundName);
 	game.world.sendToBack(background);
+}
+
+function startBackgroundMusic() {
+	backgroundMusic.play();
 }
