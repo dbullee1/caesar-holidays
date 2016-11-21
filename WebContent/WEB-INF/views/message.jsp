@@ -38,12 +38,12 @@
 				</div>
 			</div>
 		</nav>
-		<div class="panel panel-default">
-			<h1>Vorlijk Kerstfeest</h1>
-		
+		<div class="panel panel-default">		
  			 <div class="panel-body">
-				<p><h1>gefeliciteerd</h1>
-					{Persoonlijk bericht}
+				<h1>Gefeliciteerd met het halen van de Caesar kerst game!</h1>
+				<p>
+					Vanuit Caesar ${branch} willen we je bedanken voor je inzet het afgelopen jaar.</br>
+					We wensen je een fijne feestdagen en een gelukkig 2017 toe.
 				</p>
 			</div>
 		</div>

@@ -39,12 +39,10 @@
 			</div>
 		</nav>
 		<div class="panel panel-default">
-			<h1>Fijne Feestdagen</h1>
-		
  			 <div class="panel-body">
-				<p>Inleiding blablabla</p>
-				<p> ga Via het menu naar het spel blablabla<p>
-				<p> speel het spel voor je persoonlijke Caesar boodschap<p>
+				<h1>Welkom collega!</h1>
+				<p>Helaas is door hevige sneeuwval je kerstboodschap bevroren en kunnen we deze momenteel niet tonen.<p>
+				<p>Speel <a href="./game5">de game</a> en help de kerstboostschap te ontdooien. Gebruik je kerstverlichting om de ijskoude sneeuwballen kapot te maken.</p>
 			</div>
 		</div>
 </body>

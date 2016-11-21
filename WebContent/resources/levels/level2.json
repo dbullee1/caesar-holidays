@@ -1,5 +1,5 @@
 {
-	"name": "level 1",
+	"name": "level 2",
 	"background": "starfield",
 	"balls": [{
 		"size": 2,
@@ -17,18 +17,26 @@
 	"platforms": [{
 			"type": "roof",
 			"position": {
-				"x": 400,
+				"x": 0,
 				"y": 568
 			},
-			"width": 400,
+			"width": 100,
 			"height": 32
 		}, {
 			"type": "ice",
 			"position": {
-				"x": 0,
+				"x": 100,
 				"y": 568
 			},
-			"width": 400,
+			"width": 600,
+			"height": 32
+		}, {
+			"type": "roof",
+			"position": {
+				"x": 700,
+				"y": 568
+			},
+			"width": 100,
 			"height": 32
 		}
 	]
