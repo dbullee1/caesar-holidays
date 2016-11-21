@@ -30,7 +30,7 @@ var projectiles;
 var cachedLevel;
 var levelUrl = '../resources/levels/level';
 var levelExtension = '.json'
-var level = 2;
+var level = 1;
 var finalLevel = 3;
 
 var platforms = {};
@@ -84,6 +84,7 @@ function preload() {
 }
 
 function create() {
+
 	// game
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	createSnowEmitter();
@@ -157,10 +158,6 @@ function useProjectile() {
 }
 
 function update() {
-	
-	if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
-		
-	}
 	// Collisions
 	if (!playerDying) {
 		game.physics.arcade.collide(player, platforms);
@@ -266,7 +263,7 @@ function handlePlayerMovement() {
 			useProjectile();
 		}
 		
-		let slideDecrease = 3;
+		let slideDecrease = 6;
 		let newVelocity = 0;
 		let maxVelocity = 250;
 		
