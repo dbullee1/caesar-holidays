@@ -1,12 +1,8 @@
-M Platforms (Dennis)
-	S Repeating sprite
-	S Verschillende types vloer
-		- Ijs
-		- Modder
+S Verschillende types vloer
+	- Modder
 M Audio
 	- Harpoon = ?
 	- Sneeuwball kapot = (Hong)
-S Sneeuw animatie/overlay
 C Menu / level selection
 C Redirect in menu
 C Mobile
