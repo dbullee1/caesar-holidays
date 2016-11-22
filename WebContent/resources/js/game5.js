@@ -9,7 +9,6 @@ var game = new Phaser.Game(width, height, Phaser.AUTO, 'game', {
 game.state.add('Game', game);
 
 // Sounds
-var playerHitSound;
 var snowballSplitSound;
 var harpoonHitRoofSound;
 var harpoonLaunchSound;
@@ -25,6 +24,8 @@ var levelUrl = '../resources/levels/level';
 var levelExtension = '.json'
 var level = 1;
 var finalLevel = 3;
+
+var player;
 
 // Platforms
 var bounds;
@@ -95,7 +96,6 @@ function create() {
 	backgroundMusic = game.add.audio('bgmusic');
 	backgroundMusic.onStop.add(startBackgroundMusic, this);
 
-	playerHitSound = game.add.audio('auw');
 	snowballSplitSound = game.add.audio('snowball_split');
 	harpoonHitRoofSound = game.add.audio('harpoon_roof');
 	harpoonLaunchSound = game.add.audio('harpoon_launch');
@@ -141,9 +141,9 @@ function create() {
 
 function update() {
 	// Collisions
-	if (true && !playerDying) {
-		handlePlayerCollisions();		
-		handlePlayerMovement();
+	if (!!player && !player.playerDying) {
+		player.handleCollisions();		
+		player.handleMovement();
 		handleBallCollisions();
 		handleProjectileCollisions();
 	}
@@ -253,7 +253,10 @@ function loadLevel(levelObject) {
 	createPlatform(levelPlatforms);
 	
 	// destroy player and create new player object
-	new Player(playerPosition.x, playerPosition.y);
+	if(!!player) {
+		player.destroy();
+	}
+	player = new Player(playerPosition.x, playerPosition.y);
 
 	// destroy projectiles
 	numOfProjectiles = 1;

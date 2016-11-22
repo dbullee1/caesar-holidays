@@ -1,14 +1,12 @@
-var player;
-var playerDying;
-var playerOnIce;
-var playerVelocity = 500;
-
-function Player(playerPositionX, playerPositionY){
-	if (!!player) {
-		player.destroy();
-	}
-	playerObject = game.add.sprite(playerPositionX, playerPositionY, 'santa');
-	playerDying = false;
+function Player(playerPositionX, playerPositionY) {
+	let playerObject = game.add.sprite(playerPositionX, playerPositionY, 'santa');
+	
+	playerObject.playerHitSound = game.add.audio('auw');
+	
+	playerObject.playerDying = false;
+	playerObject.playerOnIce = false;
+	playerObject.playerVelocity = 500;	
+	playerObject.playerDying = false;
 	game.physics.arcade.enable(playerObject);
 	playerObject.body.bounce.y = 0;
 	playerObject.body.gravity.y = 1500;
@@ -19,106 +17,107 @@ function Player(playerPositionX, playerPositionY){
 	playerObject.events.onOutOfBounds.add(function() {
 		setTimeout(reset, 1000);
 	}, this);
-	
-	player = playerObject;
-}
 
-function handlePlayerCollisions(){
-	game.physics.arcade.collide(player, platforms);
-	playerOnIce = game.physics.arcade.collide(player, icePlatforms);
-	
-	game.physics.arcade.collide(player, deathPit, playerHit, null, this);
-	game.physics.arcade.overlap(player, balls, playerHit, null, this);
-}
+	playerObject.handleCollisions = function() {
+		game.physics.arcade.collide(playerObject, platforms);
+		playerObject.playerOnIce = game.physics.arcade.collide(playerObject, icePlatforms);
 
-function playerHit(player, ball) {
-	playerHitSound.play();
-	playerDying = true;
-	player.body.collideWorldBounds = false;
-	player.body.velocity.y = -400;
-	player.animations.stop();
-	player.frame = 32;
+		game.physics.arcade.collide(playerObject, deathPit, playerObject.playerHit, null, this);
+		game.physics.arcade.overlap(playerObject, balls, playerObject.playerHit, null, this);
+	};
 
-	for (var i = 0; i < balls.children.length; i++) {
-		var ball = balls.children[i];
-		ball.body.velocity.setTo(0, 0);
-		ball.body.gravity = 0;
-	}
-}
+	playerObject.playerHit = function(player, ball) {
+		playerObject.playerHitSound.play();
+		playerObject.playerDying = true;
+		playerObject.body.collideWorldBounds = false;
+		playerObject.body.velocity.y = -400;
+		playerObject.animations.stop();
+		playerObject.frame = 32;
 
-function handlePlayerMovement() {
-	if (!!player) {
-		if ((game.input.activePointer.isDown || game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) 
-				&& player.body.touching.down) {
-			useProjectile();
+		for (var i = 0; i < balls.children.length; i++) {
+			var ball = balls.children[i];
+			ball.body.velocity.setTo(0, 0);
+			ball.body.gravity = 0;
 		}
-		
-		let slideDecrease = 6;
-		let newVelocity = 0;
-		let maxVelocity = 250;
-		
-		if(playerOnIce){
-			if(player.body.velocity.x < 0){
-				newVelocity = player.body.velocity.x + slideDecrease;
-			} else if(player.body.velocity.x > 0){
-				newVelocity = player.body.velocity.x - slideDecrease;
+	};
+
+	playerObject.handleMovement = function() {
+		if ((game.input.activePointer.isDown || game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) && playerObject.body.touching.down) {
+			playerObject.useProjectile();
+		}
+
+		let
+		slideDecrease = 6;
+		let
+		newVelocity = 0;
+		let
+		maxVelocity = 250;
+
+		if (playerObject.playerOnIce) {
+			if (playerObject.body.velocity.x < 0) {
+				newVelocity = playerObject.body.velocity.x + slideDecrease;
+			} else if (playerObject.body.velocity.x > 0) {
+				newVelocity = playerObject.body.velocity.x - slideDecrease;
 			}
 		}
 
 		slideDecrease++;
-		
+
 		if (cursors.left.isDown) {
-			if(playerOnIce){
-				if(player.body.velocity.x > 0){
-					newVelocity = player.body.velocity.x - slideDecrease;
-				} else{
-					let baseVelocity = player.body.velocity.x;
-					if(baseVelocity === 0){
+			if (playerObject.playerOnIce) {
+				if (playerObject.body.velocity.x > 0) {
+					newVelocity = playerObject.body.velocity.x - slideDecrease;
+				} else {
+					let
+					baseVelocity = playerObject.body.velocity.x;
+					if (baseVelocity === 0) {
 						baseVelocity = -1;
 					}
 					newVelocity = baseVelocity + (baseVelocity * 1.1);
 				}
-			} else{
+			} else {
 				newVelocity = -maxVelocity;
 			}
-			player.animations.play('left');
+			playerObject.animations.play('left');
 		} else if (cursors.right.isDown) {
-			if(playerOnIce){
-				if(player.body.velocity.x < 0){
-					newVelocity = player.body.velocity.x + slideDecrease;
-				} else{
-					let baseVelocity = player.body.velocity.x;
-					if(baseVelocity === 0){
+			if (playerObject.playerOnIce) {
+				if (playerObject.body.velocity.x < 0) {
+					newVelocity = playerObject.body.velocity.x + slideDecrease;
+				} else {
+					let
+					baseVelocity = playerObject.body.velocity.x;
+					if (baseVelocity === 0) {
 						baseVelocity = 1;
 					}
 					newVelocity = baseVelocity + (baseVelocity * 1.1);
 				}
-			} else{
+			} else {
 				newVelocity = maxVelocity;
 			}
-			player.animations.play('right');
+			playerObject.animations.play('right');
 		} else {
-			player.animations.stop();
-			player.frame = 32;
+			playerObject.animations.stop();
+			playerObject.frame = 32;
 		}
-		
-		if(newVelocity > maxVelocity){
-			player.body.velocity.x = maxVelocity;
-		} else if(newVelocity < -maxVelocity) {
-			player.body.velocity.x = -maxVelocity;
-		} else{
-			player.body.velocity.x = newVelocity;
-		}
-	}
-}
 
-function useProjectile() {
-	if (projectilesInUse < numOfProjectiles) {
-		let
-		startLocationX = player.body.x + (player.width / 4);
-		var projectile = projectiles.create(startLocationX, projectileStartLocationY, 'projectile');
-		projectilesInUse++;
-		//game.world.bringToTop(groundSprite);
-		harpoonLaunchSound.play();
-	}
+		if (newVelocity > maxVelocity) {
+			playerObject.body.velocity.x = maxVelocity;
+		} else if (newVelocity < -maxVelocity) {
+			playerObject.body.velocity.x = -maxVelocity;
+		} else {
+			playerObject.body.velocity.x = newVelocity;
+		}
+	};
+
+	playerObject.useProjectile = function() {
+		if (projectilesInUse < numOfProjectiles) {
+			let
+			startLocationX = playerObject.body.x + (playerObject.width / 4);
+			var projectile = projectiles.create(startLocationX, projectileStartLocationY, 'projectile');
+			projectilesInUse++;
+			// game.world.bringToTop(groundSprite);
+			harpoonLaunchSound.play();
+		}
+	};	
+	return playerObject;
 }
