@@ -35,7 +35,7 @@ var projectiles;
 var cachedLevel;
 var levelUrl = '../resources/levels/level';
 var levelExtension = '.json'
-var level = 3;
+var level = 1;
 var finalLevel = 3;
 
 var platforms = {};
@@ -295,7 +295,7 @@ function ballBounce(){
 	for (var i = 0; i < balls.children.length; i++) {
 		var ball = balls.children[i];
 		if (ball.body.touching.down) {
-			ball.body.velocity.y = -800;
+			ball.body.velocity.y = -800 * (this.game.time.physicsElapsed / 18 * 1000);
 		}
 	}
 }
@@ -357,10 +357,10 @@ function handlePlayerMovement() {
 		}
 		
 		if(newVelocity > maxVelocity){
-			player.body.velocity.x = maxVelocity;
+			player.body.velocity.x = maxVelocity * (this.game.time.physicsElapsed / 18 * 1000);
 		} else if(newVelocity < -maxVelocity) {
-			player.body.velocity.x = -maxVelocity;
-		}else{
+			player.body.velocity.x = -maxVelocity * (this.game.time.physicsElapsed / 18  * 1000);
+		} else{
 			player.body.velocity.x = newVelocity;
 		}
 	}

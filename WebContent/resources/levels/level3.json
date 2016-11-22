@@ -3,7 +3,7 @@
 	"background": "starfield",
 	"balls": [{
 		"size": 3,
-		"velocity": 400
+		"velocity": 200
 	}],
 	"player": {
 		"position": {
