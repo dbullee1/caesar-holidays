@@ -1,45 +1,45 @@
-var snowEmitter;
-
-var maxSnow = 0;
-var updateSnowInterval = 4 * 60;
-var snowInterval = 0;
-
 function SnowEmitter(){
-	snowEmitter = game.add.emitter(game.world.centerX, -32, 400);
-	game.world.bringToTop(snowEmitter);
-	snowEmitter.makeParticles('snowflakes', [ 0, 1, 2, 3, 4, 5 ]);
-	snowEmitter.maxParticleScale = 0.6;
-	snowEmitter.minParticleScale = 0.2;
-	snowEmitter.setYSpeed(20, 100);
-	snowEmitter.gravity = 0;
-	snowEmitter.width = game.world.width * 2;
-	snowEmitter.minRotation = 0;
-	snowEmitter.maxRotation = 40;
-
-	snowEmitter.start(false, 14000, 20);
-}
-
-function changeSnowDirection(){
-	var multi = Math.floor((maxSnow + 200) / 4), frag = (Math.floor(Math.random() * 100) - multi);
-	maxSnow = maxSnow + frag;
+	let snowEmitterObject = game.add.emitter(game.world.centerX, -32, 400);
 	
-	if (maxSnow > 200) maxSnow = 150;
-	if (maxSnow < -200) maxSnow = -150;
+	snowEmitterObject.maxSnow = 0;
+	snowEmitterObject.updateSnowInterval = 4 * 60;
+	snowEmitterObject.snowInterval = 0;
 	
-	snowEmitter.setXSpeed(maxSnow - 20, maxSnow);
-	snowEmitter.forEachAlive(setParticleXSpeed, this, maxSnow);
-}
+	snowEmitterObject.makeParticles('snowflakes', [ 0, 1, 2, 3, 4, 5 ]);
+	snowEmitterObject.maxParticleScale = 0.6;
+	snowEmitterObject.minParticleScale = 0.2;
+	snowEmitterObject.setYSpeed(20, 100);
+	snowEmitterObject.gravity = 0;
+	snowEmitterObject.width = game.world.width * 2;
+	snowEmitterObject.minRotation = 0;
+	snowEmitterObject.maxRotation = 40;
 
-function setParticleXSpeed(particle, maxSnow) {
-    particle.body.velocity.x = maxSnow - Math.floor(Math.random() * 30);
-}
-
-function updateSnowEmitter(){
-	snowInterval++;
-	if (snowInterval === updateSnowInterval) {
-		changeSnowDirection();
-		updateSnowInterval = Math.floor(Math.random() * 20) * 60; // 0 - 20sec
-																	// @ 60fps
-		snowInterval = 0;
+	game.world.bringToTop(snowEmitterObject);
+	snowEmitterObject.start(false, 14000, 20);
+	
+	snowEmitterObject.updateWind = function(){
+		snowEmitterObject.snowInterval++;
+		if (snowEmitterObject.snowInterval === snowEmitterObject.updateSnowInterval) {
+			snowEmitterObject.changeSnowDirection();
+			updateSnowInterval = Math.floor(Math.random() * 20) * 60;
+			snowEmitterObject.snowInterval = 0;
+		}
 	}
+	
+	snowEmitterObject.changeSnowDirection = function(){
+		var multi = Math.floor((snowEmitterObject.maxSnow + 200) / 4), frag = (Math.floor(Math.random() * 100) - multi);
+		snowEmitterObject.maxSnow = snowEmitterObject.maxSnow + frag;
+		
+		if (snowEmitterObject.maxSnow > 200) snowEmitterObject.maxSnow = 150;
+		if (snowEmitterObject.maxSnow < -200) snowEmitterObject.maxSnow = -150;
+		
+		snowEmitterObject.setXSpeed(snowEmitterObject.maxSnow - 20, snowEmitterObject.maxSnow);
+		snowEmitterObject.forEachAlive(snowEmitterObject.setParticleXSpeed, this, snowEmitterObject.maxSnow);
+	}
+	
+	snowEmitterObject.setParticleXSpeed = function(particle, maxSnow) {
+	    particle.body.velocity.x = maxSnow - Math.floor(Math.random() * 30);
+	}
+	
+	return snowEmitterObject;
 }
