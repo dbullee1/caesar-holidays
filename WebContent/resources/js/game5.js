@@ -246,7 +246,7 @@ function projectileBallCollision(projectile, ball) {
 
 	if (balls.children.length === 0) {
 		if (level === finalLevel) {
-			window.location = "./message?branch=" + theme;
+			window.location = "./message";
 		} else {
 			level++;
 			createSplashScreen(getLevel(level));
