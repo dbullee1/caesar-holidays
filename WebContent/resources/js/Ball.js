@@ -30,10 +30,6 @@ function Ball(size, velocityX, velocityY, positionX, positionY){
 }
 
 function handleBallCollisions(){
-	if (defaultFloor != undefined) {
-		game.physics.arcade.collide(balls, defaultFloor, ballBounce, null, this)
-	}
-
 	game.physics.arcade.collide(balls, platforms, ballBounce, null, this);
 	game.physics.arcade.collide(balls, icePlatforms, ballBounce, null, this);
 }
