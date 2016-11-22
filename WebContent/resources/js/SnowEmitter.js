@@ -33,3 +33,13 @@ function changeSnowDirection(){
 function setParticleXSpeed(particle, maxSnow) {
     particle.body.velocity.x = maxSnow - Math.floor(Math.random() * 30);
 }
+
+function updateSnowEmitter(){
+	snowInterval++;
+	if (snowInterval === updateSnowInterval) {
+		changeSnowDirection();
+		updateSnowInterval = Math.floor(Math.random() * 20) * 60; // 0 - 20sec
+																	// @ 60fps
+		snowInterval = 0;
+	}
+}

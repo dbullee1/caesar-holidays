@@ -30,8 +30,6 @@ var player;
 // Platforms
 var bounds;
 var deathPit;
-var floor; //TODO floor is invisble and can be removed?
-var groundSprite;
 
 var platforms = {};
 platforms.children = [];
@@ -77,7 +75,7 @@ function preload() {
 	game.load.image('ground_invisible', '../resources/images/platforms/dak_invisible.png');
 	game.load.image('roof', '../resources/images/platforms/cartoon-roof.jpg');
 	game.load.image('ice', '../resources/images/platforms/roof-ice.png');
-	
+
 	game.load.image('splash1', '../resources/images/splash1.png')
 	game.load.image('splash2', '../resources/images/splash2.png')
 	game.load.image('splash3', '../resources/images/splash3.png')
@@ -109,7 +107,7 @@ function create() {
 
 	bounds = game.add.group();
 	bounds.enableBody = true;
-	
+
 	deathPit = game.add.group();
 	deathPit.enableBody = true;
 
@@ -120,12 +118,6 @@ function create() {
 	balls.enableBody = true;
 
 	// Sprites
-	groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'roof');
-	levelProgressText = game.add.text(10, 10, 'level: ' + level + '/' + finalLevel, {
-		fontSize : '32px',
-		fill : '#ffffff'
-	});
-	
 	var top = bounds.create(0, -32, 'ground_invisible');
 	top.body.immovable = true;
 	var bottom = deathPit.create(0, 599, 'ground_invisible');
@@ -135,7 +127,14 @@ function create() {
 	projectileStartLocationY = game.world.height - 100
 	cursors = game.input.keyboard.createCursorKeys();
 
+	// Audio
 	startBackgroundMusic();
+
+	// UI
+	levelProgressText = game.add.text(10, 10, 'level: ' + level + '/' + finalLevel, {
+		fontSize : '32px',
+		fill : '#ffffff'
+	});
 	createSplashScreen(getLevel(level));
 }
 
@@ -147,26 +146,19 @@ function update() {
 		handleBallCollisions();
 		handleProjectileCollisions();
 	}
-	
-	// Snow Wind
-	snowInterval++;
-    if (snowInterval === updateSnowInterval)
-    {
-        changeSnowDirection();
-        updateSnowInterval = Math.floor(Math.random() * 20) * 60; // 0 - 20sec @ 60fps
-        snowInterval = 0;
-    }
+
+	updateSnowEmitter();
 }
 
 /**
  * Projectile methods
  */
 
-function handleProjectileCollisions(){
+function handleProjectileCollisions() {
 	game.physics.arcade.collide(projectiles, platforms);
 	game.physics.arcade.overlap(projectiles, bounds, projectileHitBounds, null, this);
 	game.physics.arcade.overlap(projectiles, balls, projectileBallCollision, null, this);
-	
+
 	for (var i = 0; i < projectiles.children.length; i++) {
 		var projectile = projectiles.children[i];
 		projectile.body.y -= 7.35;
@@ -230,7 +222,7 @@ function getLevel(levelName) {
 	return levelObject;
 }
 
-function loadLevel(levelObject) {	
+function loadLevel(levelObject) {
 	let
 	levelBalls = levelObject.balls;
 	let
@@ -251,7 +243,7 @@ function loadLevel(levelObject) {
 
 	// createPlatforms
 	createPlatform(levelPlatforms);
-	
+
 	// destroy player and create new player object
 	if(!!player) {
 		player.destroy();
@@ -269,13 +261,12 @@ function loadLevel(levelObject) {
 }
 
 function createSplashScreen(levelObject) {
-	//create splashscreen
+	// create splashscreen
 	splashScreen = game.add.button(0, 0, 'splash' + level, function() {
 		splashClicked(levelObject)
 	}, this);
 	splashScreenVisible = true;
 }
-
 
 function splashClicked(levelToLoad) {
 	splashScreen.destroy();
@@ -298,13 +289,6 @@ function createBalls(levelBalls) {
 }
 
 function createPlatform(levelPlatforms) {
-	if (!!groundSprite) {
-		groundSprite.destroy();
-	}
-	if (!!floor) {
-		floor.destroy();
-	}
-
 	clearGroup(platforms);
 	clearGroup(icePlatforms);
 
@@ -319,17 +303,11 @@ function createPlatform(levelPlatforms) {
 			platforms.add(platformObject);
 		}
 	}
-
-	// fallback
-	if (platforms.children.length == 0) {
-		groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'roof');
-		floor = platforms.create(0, game.world.height - 32, 'ground_invisible');
-		floor.body.immovable = true;
-	}
 }
 
-function clearGroup(group){
-	let i = group.children.length;
+function clearGroup(group) {
+	let
+	i = group.children.length;
 	while (i--) {
 		group.children[i].destroy();
 	}
