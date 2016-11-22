@@ -140,7 +140,7 @@ function create() {
 
 function update() {
 	// Collisions
-	if (!!player && !player.playerDying) {
+	if (!!player && !player.isDying()) {
 		player.handleCollisions();		
 		player.handleMovement();
 		handleBallCollisions();
