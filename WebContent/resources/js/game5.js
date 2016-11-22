@@ -131,30 +131,22 @@ function create() {
 	startBackgroundMusic();
 
 	// UI
-	createSplashScreen(getLevel(level));
 	levelProgressText = game.add.text(10, 10, 'level: ' + level + '/' + finalLevel, {
 		fontSize : '32px',
 		fill : '#ffffff'
 	});
+	createSplashScreen(getLevel(level));
 }
 
 function update() {
-	// Collisions
-	if (true && !playerDying) {
+	if (!playerDying) {
 		handlePlayerCollisions();
 		handlePlayerMovement();
 		handleBallCollisions();
 		handleProjectileCollisions();
 	}
 
-	// Snow Wind
-	snowInterval++;
-	if (snowInterval === updateSnowInterval) {
-		changeSnowDirection();
-		updateSnowInterval = Math.floor(Math.random() * 20) * 60; // 0 - 20sec
-																	// @ 60fps
-		snowInterval = 0;
-	}
+	updateSnowEmitter();
 }
 
 /**
