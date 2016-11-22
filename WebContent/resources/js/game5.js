@@ -295,7 +295,7 @@ function ballBounce(){
 	for (var i = 0; i < balls.children.length; i++) {
 		var ball = balls.children[i];
 		if (ball.body.touching.down) {
-			ball.body.velocity.y = -800 * (this.game.time.physicsElapsed / 18 * 1000);
+			ball.body.velocity.y = -800;
 		}
 	}
 }
@@ -357,9 +357,9 @@ function handlePlayerMovement() {
 		}
 		
 		if(newVelocity > maxVelocity){
-			player.body.velocity.x = maxVelocity * (this.game.time.physicsElapsed / 18 * 1000);
+			player.body.velocity.x = maxVelocity;
 		} else if(newVelocity < -maxVelocity) {
-			player.body.velocity.x = -maxVelocity * (this.game.time.physicsElapsed / 18  * 1000);
+			player.body.velocity.x = -maxVelocity;
 		} else{
 			player.body.velocity.x = newVelocity;
 		}
