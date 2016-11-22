@@ -1,28 +1,40 @@
 {
 	"name": "level 3",
 	"background": "starfield",
-	"balls": [
-	{
-		"size": 2,
-		"velocity": 300
-	}, {
+	"balls": [{
 		"size": 3,
 		"velocity": 400
 	}],
 	"player": {
 		"position": {
-			"x": 500,
-			"y": 200
+			"x": 400,
+			"y": 150
 		}
 	},
 	"platforms": [{
-			"type": "roof-ice",
+			"type": "ice",
 			"position": {
 				"x": 100,
-				"y": 575
+				"y": 568
 			},
-			"width": 600,
-			"height": 25
+			"width": 150,
+			"height": 32
+		}, {
+			"type": "roof",
+			"position": {
+				"x": 250,
+				"y": 568
+			},
+			"width": 300,
+			"height": 32
+		}, {
+			"type": "ice",
+			"position": {
+				"x": 550,
+				"y": 568
+			},
+			"width": 150,
+			"height": 32
 		}
 	]
 }
