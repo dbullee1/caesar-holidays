@@ -53,6 +53,8 @@ var levelProgressText;
 
 var playerVelocity = 500;
 var projectileStartLocationY;
+var splashScreen;
+var splashScreenVisible = false;
 
 function preload() {
 
@@ -83,6 +85,9 @@ function preload() {
 	game.load.image('normal', '../resources/images/platforms/cartoon-roof.jpg');
 	game.load.image('ice', '../resources/images/platforms/roof-ice.png');
 	game.load.image('mud', '../resources/images/platforms/cartoon-roof.jpg');
+	game.load.image('splash1', '../resources/images/splash1.png')
+	game.load.image('splash2', '../resources/images/splash2.png')
+	game.load.image('splash3', '../resources/images/splash3.png')
 
 	game.load.image('snowball_16', '../resources/images/snowballs/snowball_16.png');
 	game.load.image('snowball_32', '../resources/images/snowballs/snowball_32.png');
@@ -140,7 +145,7 @@ function create() {
 	cursors = game.input.keyboard.createCursorKeys();
 
 	startBackgroundMusic();
-	loadLevel(getLevel(level));
+	createSplashScreen(getLevel(level));
 }
 
 function createSnowEmitter() {
@@ -186,7 +191,7 @@ function useProjectile() {
 
 function update() {
 	// Collisions
-	if (!playerDying) {
+	if (true && !playerDying) {
 		game.physics.arcade.collide(player, platforms);
 		playerOnIce = game.physics.arcade.collide(player, icePlatforms);
 		
@@ -244,7 +249,7 @@ function projectileBallCollision(projectile, ball) {
 			window.location = "./message?branch=" + theme;
 		} else {
 			level++;
-			loadLevel(getLevel(level));
+			createSplashScreen(getLevel(level));
 		}
 	}
 }
@@ -274,7 +279,7 @@ function playerHit(player, ball) {
 }
 
 function reset() {
-	loadLevel(cachedLevel);
+	createSplashScreen(cachedLevel);
 }
 
 function handleBallPhysics() {
@@ -379,7 +384,7 @@ function getLevel(levelName) {
 	return levelObject;
 }
 
-function loadLevel(levelObject) {
+function loadLevel(levelObject) {	
 	let
 	levelBalls = levelObject.balls;
 	let
@@ -395,14 +400,14 @@ function loadLevel(levelObject) {
 	// destroy current balls and create new balls
 	createBalls(levelBalls);
 
-	// destroy player and create new player object
-	createPlayer(playerPosition);
-
 	// caches the level
 	cachedLevel = levelObject
 
 	// createPlatforms
 	createPlatform(levelPlatforms);
+	
+	// destroy player and create new player object
+	createPlayer(playerPosition);
 
 	// destroy projectiles
 	numOfProjectiles = 1;
@@ -413,6 +418,22 @@ function loadLevel(levelObject) {
 		projectiles.children[i].destroy();
 	}
 }
+
+function createSplashScreen(levelObject) {
+	//create splashscreen
+	splashScreen = game.add.button(0, 0, 'splash' + level, function() {
+		splashClicked(levelObject)
+	}, this);
+	splashScreenVisible = true;
+}
+
+
+function splashClicked(levelToLoad) {
+	splashScreen.destroy();
+	splashScreenVisible = false;
+	loadLevel(levelToLoad);
+}
+
 
 function createPlayer(playerPosition) {
 	if (!!player) {
