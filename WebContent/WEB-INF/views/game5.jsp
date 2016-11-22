@@ -13,7 +13,7 @@
 <script type="text/javascript" src="../resources/js/Ball.js"></script>
 <script type="text/javascript" src="../resources/js/Platform.js"></script>
 <script type="text/javascript" src="../resources/js/SnowEmitter.js"></script>
-
+<script type="text/javascript" src="../resources/js/Player.js"></script>
 <!-- Latest compiled and minified JavaScript -->
 <script src="../resources/js/bootstrap.min.js"></script>
 	
