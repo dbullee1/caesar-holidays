@@ -28,3 +28,21 @@ function Ball(size, velocityX, velocityY, positionX, positionY){
 	
 	return ballPhaserObj;
 }
+
+function handleBallCollisions(){
+	if (floor != undefined) {
+		game.physics.arcade.collide(balls, floor, ballBounce, null, this)
+	}
+
+	game.physics.arcade.collide(balls, platforms, ballBounce, null, this);
+	game.physics.arcade.collide(balls, icePlatforms, ballBounce, null, this);
+}
+
+function ballBounce(){
+	for (var i = 0; i < balls.children.length; i++) {
+		var ball = balls.children[i];
+		if (ball.body.touching.down) {
+			ball.body.velocity.y = -800;
+		}
+	}
+}

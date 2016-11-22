@@ -1,12 +1,5 @@
-S Verschillende types vloer (Dennis)
-M Audio
-	- Harpoon = Spring/veer + dart pijl in dartbord geluid als hij raakt
-	- Sneeuwball kapot = (Hong)
-	- Achtergrond muziek, experts project
-M Instructies
-	- Splash screen met instructies per level
+Instructies
  	C - Verhaal in splash screens
- C Mobile
 C Menu / level selection
 	C Redirect in menu
 W Power ups

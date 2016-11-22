@@ -39,7 +39,7 @@
 			</div>
 		</nav>
 		<div class="panel panel-default">
-			<p>About text</p>
+			<p>Made in Utrecht ©</p>
 		</div>
 </body>
 </html>

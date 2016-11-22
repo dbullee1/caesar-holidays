@@ -8,14 +8,12 @@ var game = new Phaser.Game(width, height, Phaser.AUTO, 'game', {
 });
 game.state.add('Game', game);
 
+// Sounds
 var playerHitSound;
 var snowballSplitSound;
 var harpoonHitRoofSound;
 var harpoonLaunchSound;
 var backgroundMusic;
-
-var background;
-var groundSprite;
 
 var maxSnow = 0;
 var snowEmitter;
@@ -24,13 +22,14 @@ var snowInterval = 0;
 
 var spaceBar;
 
+// Player
 var player;
 var playerDying;
 var playerOnIce;
+var playerVelocity = 500;
 
-var numOfProjectiles = 1;
-var projectilesInUse = 0;
-var projectiles;
+// Level
+var background;
 
 var cachedLevel;
 var levelUrl = '../resources/levels/level';
@@ -38,34 +37,40 @@ var levelExtension = '.json'
 var level = 1;
 var finalLevel = 3;
 
+// Platforms
+var bounds;
+var deathPit;
+var floor; //TODO floor is invisble and can be removed?
+var groundSprite;
+
 var platforms = {};
 platforms.children = [];
 var icePlatforms = {};
 platforms.children = [];
 
-var bounds;
-var deathPit;
-var floor;
+// Moving entities
+var numOfProjectiles = 1;
+var projectilesInUse = 0;
+var projectiles;
+var projectileStartLocationY;
 
 var balls;
 
+// UI
 var levelProgressText;
 
-var playerVelocity = 500;
-var projectileStartLocationY;
 var splashScreen;
 var splashScreenVisible = false;
 
 function preload() {
-
-	// audio
+	// Audio
 	game.load.audio('bgmusic', '../resources/sounds/bgmusic.mp3');
 	game.load.audio('auw', '../resources/sounds/auw.mp3');
 	game.load.audio('snowball_split', '../resources/sounds/snowball_split.mp3')
 	game.load.audio('harpoon_roof', '../resources/sounds/harpoon_roof.mp3')
 	game.load.audio('harpoon_launch', '../resources/sounds/harpoon_launch.mp3')
 
-	// sprites
+	// Sprites
 	game.load.image('starfield', '../resources/assets/misc/starfield.jpg');
 
 	game.load.image('projectile', '../resources/images/xmas-harpoon.png')
@@ -81,10 +86,8 @@ function preload() {
 
 	game.load.image('ground_invisible', '../resources/images/platforms/dak_invisible.png');
 	game.load.image('roof', '../resources/images/platforms/cartoon-roof.jpg');
-	game.load.image('roof-ice', '../resources/images/platforms/roof-ice.png');
-	game.load.image('normal', '../resources/images/platforms/cartoon-roof.jpg');
 	game.load.image('ice', '../resources/images/platforms/roof-ice.png');
-	game.load.image('mud', '../resources/images/platforms/cartoon-roof.jpg');
+	
 	game.load.image('splash1', '../resources/images/splash1.png')
 	game.load.image('splash2', '../resources/images/splash2.png')
 	game.load.image('splash3', '../resources/images/splash3.png')
@@ -95,12 +98,11 @@ function preload() {
 }
 
 function create() {
-
-	// game
+	// Game
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	createSnowEmitter();
 
-	// audio
+	// Audio
 	backgroundMusic = game.add.audio('bgmusic');
 	backgroundMusic.onStop.add(startBackgroundMusic, this);
 
@@ -109,7 +111,7 @@ function create() {
 	harpoonHitRoofSound = game.add.audio('harpoon_roof');
 	harpoonLaunchSound = game.add.audio('harpoon_launch');
 
-	// groups
+	// Groups
 	platforms = game.add.group();
 	platforms.enableBody = true;
 
@@ -128,7 +130,7 @@ function create() {
 	balls = game.add.group();
 	balls.enableBody = true;
 
-	// sprites
+	// Sprites
 	groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'roof');
 	levelProgressText = game.add.text(10, 10, 'level: ' + level + '/' + finalLevel, {
 		fontSize : '32px',
@@ -140,7 +142,7 @@ function create() {
 	var bottom = deathPit.create(0, 599, 'ground_invisible');
 	bottom.body.immovable = true;
 
-	// properties
+	// Properties
 	projectileStartLocationY = game.world.height - 100
 	cursors = game.input.keyboard.createCursorKeys();
 
@@ -178,42 +180,16 @@ function setParticleXSpeed(particle, maxSnow) {
     particle.body.velocity.x = maxSnow - Math.floor(Math.random() * 30);
 }
 
-function useProjectile() {
-	if (projectilesInUse < numOfProjectiles) {
-		let
-		startLocationX = player.body.x + (player.width / 4);
-		var projectile = projectiles.create(startLocationX, projectileStartLocationY, 'projectile');
-		projectilesInUse++;
-		//game.world.bringToTop(groundSprite);
-		harpoonLaunchSound.play();
-	}
-}
-
 function update() {
 	// Collisions
 	if (true && !playerDying) {
-		game.physics.arcade.collide(player, platforms);
-		playerOnIce = game.physics.arcade.collide(player, icePlatforms);
-		
-		game.physics.arcade.collide(player, deathPit, playerHit, null, this);
-		game.physics.arcade.overlap(player, balls, playerHit, null, this);
-		
+		handlePlayerCollisions();		
 		handlePlayerMovement();
-
-		game.physics.arcade.collide(projectiles, platforms);
-		game.physics.arcade.overlap(projectiles, bounds, projectileHitBounds, null, this);
-		game.physics.arcade.overlap(projectiles, balls, projectileBallCollision, null, this);
-
-		handleBallPhysics();
-
-		// Projectile
-		for (var i = 0; i < projectiles.children.length; i++) {
-			var projectile = projectiles.children[i];
-			projectile.body.y -= 7.35;
-		}
+		handleBallCollisions();
+		handleProjectileCollisions();
 	}
 	
-	
+	// Snow Wind
 	snowInterval++;
     if (snowInterval === updateSnowInterval)
     {
@@ -223,44 +199,12 @@ function update() {
     }
 }
 
-function projectileHitBounds(projectile) {
-	harpoonHitRoofSound.play();
-	destroyProjectile(projectile);
-}
-
-function destroyProjectile(projectile) {
-	projectile.destroy();
-	projectilesInUse--;
-}
-
-function projectileBallCollision(projectile, ball) {
-	snowballSplitSound.play();
-	destroyProjectile(projectile);
-
-	if (ball.key === 'snowball_48') {
-		splitBall(ball, 2);
-	} else if (ball.key === 'snowball_32') {
-		splitBall(ball, 1);
-	}
-	ball.destroy();
-
-	if (balls.children.length === 0) {
-		if (level === finalLevel) {
-			window.location = "./message";
-		} else {
-			level++;
-			createSplashScreen(getLevel(level));
-		}
-	}
-}
-
-function splitBall(original, newBallSize) {
-	let
-	velocityX = original.body.velocity.x;
-	let
-	velocityY = original.body.velocity.y;
-	balls.add(new Ball(newBallSize, velocityX, velocityY, original.body.x, original.body.y));
-	balls.add(new Ball(newBallSize, -velocityX, velocityY, original.body.x, original.body.y));
+function handlePlayerCollisions(){
+	game.physics.arcade.collide(player, platforms);
+	playerOnIce = game.physics.arcade.collide(player, icePlatforms);
+	
+	game.physics.arcade.collide(player, deathPit, playerHit, null, this);
+	game.physics.arcade.overlap(player, balls, playerHit, null, this);
 }
 
 function playerHit(player, ball) {
@@ -275,28 +219,6 @@ function playerHit(player, ball) {
 		var ball = balls.children[i];
 		ball.body.velocity.setTo(0, 0);
 		ball.body.gravity = 0;
-	}
-}
-
-function reset() {
-	createSplashScreen(cachedLevel);
-}
-
-function handleBallPhysics() {
-	if (floor != undefined) {
-		game.physics.arcade.collide(balls, floor, ballBounce, null, this)
-	}
-
-	game.physics.arcade.collide(balls, platforms, ballBounce, null, this);
-	game.physics.arcade.collide(balls, icePlatforms, ballBounce, null, this);
-}
-
-function ballBounce(){
-	for (var i = 0; i < balls.children.length; i++) {
-		var ball = balls.children[i];
-		if (ball.body.touching.down) {
-			ball.body.velocity.y = -800;
-		}
 	}
 }
 
@@ -364,6 +286,72 @@ function handlePlayerMovement() {
 			player.body.velocity.x = newVelocity;
 		}
 	}
+}
+
+function useProjectile() {
+	if (projectilesInUse < numOfProjectiles) {
+		let
+		startLocationX = player.body.x + (player.width / 4);
+		var projectile = projectiles.create(startLocationX, projectileStartLocationY, 'projectile');
+		projectilesInUse++;
+		//game.world.bringToTop(groundSprite);
+		harpoonLaunchSound.play();
+	}
+}
+
+function handleProjectileCollisions(){
+	game.physics.arcade.collide(projectiles, platforms);
+	game.physics.arcade.overlap(projectiles, bounds, projectileHitBounds, null, this);
+	game.physics.arcade.overlap(projectiles, balls, projectileBallCollision, null, this);
+	
+	for (var i = 0; i < projectiles.children.length; i++) {
+		var projectile = projectiles.children[i];
+		projectile.body.y -= 7.35;
+	}
+}
+
+function projectileHitBounds(projectile) {
+	harpoonHitRoofSound.play();
+	destroyProjectile(projectile);
+}
+
+function projectileBallCollision(projectile, ball) {
+	snowballSplitSound.play();
+	destroyProjectile(projectile);
+
+	if (ball.key === 'snowball_48') {
+		splitBall(ball, 2);
+	} else if (ball.key === 'snowball_32') {
+		splitBall(ball, 1);
+	}
+	ball.destroy();
+
+	if (balls.children.length === 0) {
+		if (level === finalLevel) {
+			window.location = "./message";
+		} else {
+			level++;
+			createSplashScreen(getLevel(level));
+		}
+	}
+}
+
+function destroyProjectile(projectile) {
+	projectile.destroy();
+	projectilesInUse--;
+}
+
+function splitBall(original, newBallSize) {
+	let
+	velocityX = original.body.velocity.x;
+	let
+	velocityY = original.body.velocity.y;
+	balls.add(new Ball(newBallSize, velocityX, velocityY, original.body.x, original.body.y));
+	balls.add(new Ball(newBallSize, -velocityX, velocityY, original.body.x, original.body.y));
+}
+
+function reset() {
+	createSplashScreen(cachedLevel);
 }
 
 function getLevel(levelName) {

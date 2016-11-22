@@ -43,7 +43,7 @@
 				<h1>Gefeliciteerd met het halen van de Caesar kerst game!</h1>
 				<p>
 					Vanuit Caesar ${branch} willen we je bedanken voor je inzet het afgelopen jaar.</br>
-					We wensen je een fijne feestdagen en een gelukkig 2017 toe.
+					We wensen je fijne feestdagen en een gelukkig 2017 toe.
 				</p>
 			</div>
 		</div>
