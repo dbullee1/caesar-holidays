@@ -1,5 +1,5 @@
 package nl.caesar.holidays.game.model;
 
-public enum Theme {
+public enum Branch {
 	EXPERTS, TENDERS, DEFAULT;
 }

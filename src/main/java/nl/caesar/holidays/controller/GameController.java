@@ -8,13 +8,13 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import nl.caesar.holidays.game.model.Theme;
+import nl.caesar.holidays.game.model.Branch;
 
 @Controller
 public class GameController {
 
 	@RequestMapping(value = "/game3", method = RequestMethod.GET)
-	public String getGamePage3(ModelMap model) {
+	public String getGamePage3() {
 		return "game3";
 	}
 
@@ -29,7 +29,7 @@ public class GameController {
 		}
 
 		if (branchName == null) {
-			branchName = Theme.DEFAULT.name();
+			branchName = Branch.DEFAULT.name();
 		}
 		model.put("theme", branchName);
 
