@@ -46,3 +46,12 @@ function ballBounce(){
 		}
 	}
 }
+
+function splitBall(originalBall, newBallSize) {
+	let
+	velocityX = originalBall.body.velocity.x;
+	let
+	velocityY = originalBall.body.velocity.y;
+	balls.add(new Ball(newBallSize, velocityX, velocityY, originalBall.body.x, originalBall.body.y));
+	balls.add(new Ball(newBallSize, -velocityX, velocityY, originalBall.body.x, originalBall.body.y));
+}

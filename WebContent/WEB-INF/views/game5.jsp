@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="../resources/css/bootstrap-theme.min.css"></link>
 <script type="text/javascript" src="../resources/js/Ball.js"></script>
 <script type="text/javascript" src="../resources/js/Platform.js"></script>
+<script type="text/javascript" src="../resources/js/SnowEmitter.js"></script>
 
 <!-- Latest compiled and minified JavaScript -->
 <script src="../resources/js/bootstrap.min.js"></script>
