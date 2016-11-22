@@ -18,6 +18,7 @@ var spaceBar;
 
 // Level
 var background;
+var snowEmitter;
 
 var cachedLevel;
 var levelUrl = '../resources/levels/level';
@@ -88,7 +89,7 @@ function preload() {
 function create() {
 	// Game
 	game.physics.startSystem(Phaser.Physics.ARCADE);
-	new SnowEmitter();
+	snowEmitter = new SnowEmitter();
 
 	// Audio
 	backgroundMusic = game.add.audio('bgmusic');
@@ -147,7 +148,7 @@ function update() {
 		handleProjectileCollisions();
 	}
 
-	updateSnowEmitter();
+	snowEmitter.updateWind();
 }
 
 /**
@@ -174,10 +175,8 @@ function projectileBallCollision(projectile, ball) {
 	snowballSplitSound.play();
 	destroyProjectile(projectile);
 
-	if (ball.key === 'snowball_48') {
-		splitBall(ball, 2);
-	} else if (ball.key === 'snowball_32') {
-		splitBall(ball, 1);
+	if (ball.size > 1) {
+		ball.split();
 	}
 	ball.destroy();
 

@@ -19,12 +19,31 @@ function Ball(size, velocityX, velocityY, positionX, positionY){
 	}
 	
 	var ballPhaserObj = game.add.sprite(positionX, positionY, this.spriteName);
+	ballPhaserObj.size = size;
+	
 	game.physics.arcade.enable(ballPhaserObj);
 	ballPhaserObj.body.collideWorldBounds=true;
 	ballPhaserObj.body.bounce.setTo(1,1);
 	ballPhaserObj.body.gravity.y = this.gravity;
 	ballPhaserObj.body.velocity.x = velocityX;
 	ballPhaserObj.body.velocity.y = velocityY;
+	
+	ballPhaserObj.bounce = function(){
+		if (ballPhaserObj.body.touching.down) {
+			ballPhaserObj.body.velocity.y = -800;
+		}
+	}
+	
+	ballPhaserObj.split = function(){
+		let size = ballPhaserObj.size - 1;
+		let	velocityX = ballPhaserObj.body.velocity.x;
+		let	velocityY = ballPhaserObj.body.velocity.y;
+		let positionX = ballPhaserObj.body.x;
+		let positionY = ballPhaserObj.body.y
+		
+		balls.add(new Ball(size, velocityX, velocityY, positionX, positionY));
+		balls.add(new Ball(size, -velocityX, velocityY, positionX, positionY));
+	}
 	
 	return ballPhaserObj;
 }
@@ -37,17 +56,6 @@ function handleBallCollisions(){
 function ballBounce(){
 	for (var i = 0; i < balls.children.length; i++) {
 		var ball = balls.children[i];
-		if (ball.body.touching.down) {
-			ball.body.velocity.y = -800;
-		}
+		ball.bounce();
 	}
-}
-
-function splitBall(originalBall, newBallSize) {
-	let
-	velocityX = originalBall.body.velocity.x;
-	let
-	velocityY = originalBall.body.velocity.y;
-	balls.add(new Ball(newBallSize, velocityX, velocityY, originalBall.body.x, originalBall.body.y));
-	balls.add(new Ball(newBallSize, -velocityX, velocityY, originalBall.body.x, originalBall.body.y));
 }
