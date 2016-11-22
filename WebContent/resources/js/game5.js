@@ -35,8 +35,7 @@ var finalLevel = 3;
 // Platforms
 var bounds;
 var deathPit;
-var floor; //TODO floor is invisble and can be removed?
-var groundSprite;
+var defaultFloor;
 
 var platforms = {};
 platforms.children = [];
@@ -126,7 +125,7 @@ function create() {
 	balls.enableBody = true;
 
 	// Sprites
-	groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'roof');
+	defaultFloor = game.add.tileSprite(0, game.world.height - 32, width, 32, 'roof');
 	levelProgressText = game.add.text(10, 10, 'level: ' + level + '/' + finalLevel, {
 		fontSize : '32px',
 		fill : '#ffffff'
@@ -263,7 +262,7 @@ function useProjectile() {
 		startLocationX = player.body.x + (player.width / 4);
 		var projectile = projectiles.create(startLocationX, projectileStartLocationY, 'projectile');
 		projectilesInUse++;
-		//game.world.bringToTop(groundSprite);
+		//game.world.bringToTop(defaultFloor);
 		harpoonLaunchSound.play();
 	}
 }
@@ -424,11 +423,8 @@ function createBalls(levelBalls) {
 }
 
 function createPlatform(levelPlatforms) {
-	if (!!groundSprite) {
-		groundSprite.destroy();
-	}
-	if (!!floor) {
-		floor.destroy();
+	if (!!defaultFloor) {
+		defaultFloor.destroy();
 	}
 
 	clearGroup(platforms);
@@ -448,9 +444,9 @@ function createPlatform(levelPlatforms) {
 
 	// fallback
 	if (platforms.children.length == 0) {
-		groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'roof');
-		floor = platforms.create(0, game.world.height - 32, 'ground_invisible');
-		floor.body.immovable = true;
+		defaultFloor = game.add.tileSprite(0, game.world.height - 32, width, 32, 'roof');
+		game.physics.arcade.enable(defaultFloor);
+		platformPhaserObj.body.immovable = true;
 	}
 }
 
