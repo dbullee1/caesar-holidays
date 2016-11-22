@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import nl.caesar.holidays.game.model.Theme;
+import nl.caesar.holidays.game.model.Branch;
 
 @Controller
 @RequestMapping("/index")
@@ -19,17 +19,17 @@ public class DefaultController {
 	public String getIndexPage(HttpServletResponse response,
 			@RequestParam(value = "branch", required = false) String theme) {
 
-		Theme modelTheme = null;
+		Branch modelTheme = null;
 		if (!StringUtils.isEmpty(theme)) {
 			try {
-				modelTheme = Theme.valueOf(theme.toUpperCase());
+				modelTheme = Branch.valueOf(theme.toUpperCase());
 			} catch (IllegalArgumentException e) {
 				// falling back to default Theme
 			}
 		}
 
 		if (modelTheme == null) {
-			modelTheme = Theme.DEFAULT;
+			modelTheme = Branch.DEFAULT;
 		}
 		response.addCookie(new Cookie("branch", modelTheme.name()));
 		return "index";
