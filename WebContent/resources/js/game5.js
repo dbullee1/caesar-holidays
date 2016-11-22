@@ -17,6 +17,11 @@ var backgroundMusic;
 var background;
 var groundSprite;
 
+var maxSnow = 0;
+var snowEmitter;
+var updateSnowInterval = 4 * 60;
+var snowInterval = 0;
+
 var spaceBar;
 
 var player;
@@ -30,7 +35,7 @@ var projectiles;
 var cachedLevel;
 var levelUrl = '../resources/levels/level';
 var levelExtension = '.json'
-var level = 1;
+var level = 3;
 var finalLevel = 3;
 
 var platforms = {};
@@ -39,6 +44,7 @@ var icePlatforms = {};
 platforms.children = [];
 
 var bounds;
+var deathPit;
 var floor;
 
 var balls;
@@ -107,6 +113,9 @@ function create() {
 
 	bounds = game.add.group();
 	bounds.enableBody = true;
+	
+	deathPit = game.add.group();
+	deathPit.enableBody = true;
 
 	projectiles = game.add.group();
 	projectiles.enableBody = true;
@@ -120,8 +129,11 @@ function create() {
 		fontSize : '32px',
 		fill : '#ffffff'
 	});
+	
 	var top = bounds.create(0, -32, 'ground_invisible');
 	top.body.immovable = true;
+	var bottom = deathPit.create(0, 599, 'ground_invisible');
+	bottom.body.immovable = true;
 
 	// properties
 	projectileStartLocationY = game.world.height - 100
@@ -132,18 +144,33 @@ function create() {
 }
 
 function createSnowEmitter() {
-	var back_emitter = game.add.emitter(game.world.centerX, -32, 400);
-	game.world.bringToTop(back_emitter);
-	back_emitter.makeParticles('snowflakes', [ 0, 1, 2, 3, 4, 5 ]);
-	back_emitter.maxParticleScale = 0.6;
-	back_emitter.minParticleScale = 0.2;
-	back_emitter.setYSpeed(20, 100);
-	back_emitter.gravity = 0;
-	back_emitter.width = game.world.width;
-	back_emitter.minRotation = 0;
-	back_emitter.maxRotation = 40;
+	snowEmitter = game.add.emitter(game.world.centerX, -32, 400);
+	game.world.bringToTop(snowEmitter);
+	snowEmitter.makeParticles('snowflakes', [ 0, 1, 2, 3, 4, 5 ]);
+	snowEmitter.maxParticleScale = 0.6;
+	snowEmitter.minParticleScale = 0.2;
+	snowEmitter.setYSpeed(20, 100);
+	snowEmitter.gravity = 0;
+	snowEmitter.width = game.world.width * 2;
+	snowEmitter.minRotation = 0;
+	snowEmitter.maxRotation = 40;
 
-	back_emitter.start(false, 14000, 20);
+	snowEmitter.start(false, 14000, 20);
+}
+
+function changeSnowDirection(){
+	var multi = Math.floor((maxSnow + 200) / 4), frag = (Math.floor(Math.random() * 100) - multi);
+	maxSnow = maxSnow + frag;
+	
+	if (maxSnow > 200) maxSnow = 150;
+	if (maxSnow < -200) maxSnow = -150;
+	
+	snowEmitter.setXSpeed(maxSnow - 20, maxSnow);
+	snowEmitter.forEachAlive(setParticleXSpeed, this, maxSnow);
+}
+
+function setParticleXSpeed(particle, maxSnow) {
+    particle.body.velocity.x = maxSnow - Math.floor(Math.random() * 30);
 }
 
 function useProjectile() {
@@ -162,7 +189,10 @@ function update() {
 	if (!playerDying) {
 		game.physics.arcade.collide(player, platforms);
 		playerOnIce = game.physics.arcade.collide(player, icePlatforms);
+		
+		game.physics.arcade.collide(player, deathPit, playerHit, null, this);
 		game.physics.arcade.overlap(player, balls, playerHit, null, this);
+		
 		handlePlayerMovement();
 
 		game.physics.arcade.collide(projectiles, platforms);
@@ -177,6 +207,15 @@ function update() {
 			projectile.body.y -= 7.35;
 		}
 	}
+	
+	
+	snowInterval++;
+    if (snowInterval === updateSnowInterval)
+    {
+        changeSnowDirection();
+        updateSnowInterval = Math.floor(Math.random() * 20) * 60; // 0 - 20sec @ 60fps
+        snowInterval = 0;
+    }
 }
 
 function projectileHitBounds(projectile) {
@@ -201,8 +240,8 @@ function projectileBallCollision(projectile, ball) {
 	ball.destroy();
 
 	if (balls.children.length === 0) {
-		if (level === 3) {
-			window.location = "./message";
+		if (level === finalLevel) {
+			window.location = "./message?branch=" + theme;
 		} else {
 			level++;
 			loadLevel(getLevel(level));
@@ -251,7 +290,7 @@ function ballBounce(){
 	for (var i = 0; i < balls.children.length; i++) {
 		var ball = balls.children[i];
 		if (ball.body.touching.down) {
-			ball.body.velocity.y = -900;
+			ball.body.velocity.y = -800;
 		}
 	}
 }
@@ -415,11 +454,8 @@ function createPlatform(levelPlatforms) {
 		floor.destroy();
 	}
 
-	let
-	i = platforms.children.length;
-	while (i--) {
-		platforms.children[i].destroy();
-	}
+	clearGroup(platforms);
+	clearGroup(icePlatforms);
 
 	for (i = 0; i < levelPlatforms.length; i++) {
 		let
@@ -438,6 +474,13 @@ function createPlatform(levelPlatforms) {
 		groundSprite = game.add.tileSprite(0, game.world.height - 32, width, 32, 'roof');
 		floor = platforms.create(0, game.world.height - 32, 'ground_invisible');
 		floor.body.immovable = true;
+	}
+}
+
+function clearGroup(group){
+	let i = group.children.length;
+	while (i--) {
+		group.children[i].destroy();
 	}
 }
 
