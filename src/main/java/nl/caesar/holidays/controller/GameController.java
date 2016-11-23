@@ -22,12 +22,13 @@ public class GameController {
 	public String getGamePage(ModelMap model, HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
 		String branchName = null;
-		for (Cookie cookie : cookies) {
-			if (cookie.getName().equals("branch")) {
-				branchName = cookie.getValue();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("branch")) {
+					branchName = cookie.getValue();
+				}
 			}
 		}
-
 		if (branchName == null) {
 			branchName = Branch.DEFAULT.name();
 		}

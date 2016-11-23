@@ -14,7 +14,7 @@
 <!-- Latest compiled and minified JavaScript -->
 <script src="../resources/js/bootstrap.min.js"></script>
 </head>
-<body>
+<body class="message">
 		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 			<div class="container-fluid">
 				<div class="navbar-header">

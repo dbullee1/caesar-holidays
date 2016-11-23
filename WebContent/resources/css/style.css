@@ -1,7 +1,18 @@
 body {
   	padding-top: 70px;
+  	min-width: 100%;
   	width: 100%;
+  	min-height: 100%;
 	height: 100%;
+	background-size: 100%;
+}
+
+body.index {
+	background-image: url("../images/index_back.jpg");
+}
+
+body.message {
+  	background-image: url("../images/message_back.jpg");
 }
 
 .game {
